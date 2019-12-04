@@ -78,7 +78,7 @@ private:
 Plot::Plot( QWidget *parent ):
     QwtPlot( parent ),
     d_paintedPoints( 0 ),
-    d_interval( 0.0, 10.0 ),
+    d_interval( 0.0, 1.0 ),
     d_timerId( -1 )
 {
     d_directPainter = new QwtPlotDirectPainter();
@@ -90,7 +90,7 @@ Plot::Plot( QWidget *parent ):
 
     setAxisTitle( QwtPlot::xBottom, "Time [s]" );
     setAxisScale( QwtPlot::xBottom, d_interval.minValue(), d_interval.maxValue() );
-    setAxisScale( QwtPlot::yLeft, -200.0, 200.0 );
+    setAxisScale( QwtPlot::yLeft, -5.0, 5.0 );
 
     QwtPlotGrid *grid = new QwtPlotGrid();
     grid->setPen( Qt::gray, 0.0, Qt::DotLine );
