@@ -2,8 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
-class Plot;
+#include <qwidget.h>
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
@@ -19,7 +19,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    Plot *plot;
 };
 
 #endif // MAINWINDOW_H

@@ -29,13 +29,21 @@ SOURCES += \
         mainwindow.cpp \
     plot.cpp \
     curvedata.cpp \
-    signaldata.cpp
+    signaldata.cpp \
+    samplingthread.cpp \
+    knob.cpp \
+    wheelbox.cpp \
+    oscwidget.cpp
 
 HEADERS += \
         mainwindow.h \
     plot.h \
     curvedata.h \
-    signaldata.h
+    signaldata.h \
+    samplingthread.h \
+    knob.h \
+    wheelbox.h \
+    oscwidget.h
 
 FORMS += \
         mainwindow.ui
