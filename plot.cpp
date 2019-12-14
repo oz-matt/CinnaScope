@@ -11,6 +11,7 @@
 #include <qwt_painter.h>
 #include <qevent.h>
 #include<QDebug>
+
 class Canvas: public QwtPlotCanvas
 {
 public:
@@ -151,7 +152,6 @@ void Plot::setIntervalLength( double interval )
 
 void Plot::updateMe()
 {
-    qDebug() << "C++ Style Debug Message";
     updateCurve();
 }
 

@@ -7,6 +7,9 @@
 QT       += core gui
 CONFIG   += qwt
 
+INCLUDEPATH += /usr/local/qwt-6.1.4/include
+LIBS += -L/usr/local/qwt-6.1.4/lib -lqwt
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = CinnaScope
