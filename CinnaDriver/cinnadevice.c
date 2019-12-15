@@ -1,137 +1,73 @@
-#include <asm/uaccess.h> /* copy_from_user */
-#include <linux/debugfs.h>
-#include <linux/fs.h>
+#include <linux/kernel.h>
 #include <linux/init.h>
-#include <linux/kernel.h> /* min */
-#include <linux/mm.h>
 #include <linux/module.h>
-#include <linux/proc_fs.h>
-#include <linux/slab.h>
+#include <linux/device.h>
+#include <linux/fs.h>
+#include <linux/uaccess.h>
+#define  DEVICE_NAME "char_Driver"
+#define  CLASS_NAME  "chrDev"
 
-static const char *filename = "lkmc_mmap";
+MODULE_LICENSE("GPL");
 
-enum { BUFFER_SIZE = 4 };
+static int    majorNumber;
+static char   message[128] = {0};
+static int    numberOpens = 0;
+static struct class*  charClass  = NULL;
+static struct device* charDevice = NULL;
 
-struct mmap_info {
-    char *data;
+static int     dev_open(struct inode *, struct file *);
+static int     dev_release(struct inode *, struct file *);
+static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
+static ssize_t dev_write(struct file *, const char *, size_t, loff_t *);
+
+static struct file_operations fops =
+{
+    .owner = THIS_MODULE,
+    .open = dev_open,
+    .read = dev_read,
+    .write = dev_write,
+    .release = dev_release,
 };
 
-/* After unmap. */
-static void vm_close(struct vm_area_struct *vma)
-{
-    pr_info("vm_close\n");
+static int __init char_init(void){
+   printk(KERN_INFO "Char_Driver: Initializing the CharDriver LKM\n");
+   majorNumber = register_chrdev(0, DEVICE_NAME, &fops);
+   printk(KERN_INFO "char_Driver: registered correctly with major number %d\n", majorNumber);
+   charClass = class_create(THIS_MODULE, CLASS_NAME);
+   charDevice = device_create(charClass, NULL, MKDEV(majorNumber, 0), NULL, DEVICE_NAME);
+   return 0;
 }
 
-/* First page access. */
-static int vm_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
-{
-    struct page *page;
-    struct mmap_info *info;
-
-    pr_info("vm_fault\n");
-    info = (struct mmap_info *)vma->vm_private_data;
-    if (info->data) {
-        page = virt_to_page(info->data);
-        get_page(page);
-        vmf->page = page;
-    }
-    return 0;
+static void __exit char_exit(void){
+   device_destroy(charClass, MKDEV(majorNumber, 0));
+   class_unregister(charClass);
+   class_destroy(charClass);
+   unregister_chrdev(majorNumber, DEVICE_NAME);
+   printk(KERN_INFO "Char_Driver: LKM Unloaded!\n");
 }
 
-/* Aftr mmap. TODO vs mmap, when can this happen at a different time than mmap? */
-static void vm_open(struct vm_area_struct *vma)
-{
-    pr_info("vm_open\n");
+static int dev_open(struct inode *inodep, struct file *filep){
+   numberOpens++;
+   printk(KERN_INFO "Char_Driver: Device has been opened %d times\n", numberOpens);
+   return 0;
 }
 
-static struct vm_operations_struct vm_ops =
-{
-    .close = vm_close,
-    .fault = vm_fault,
-    .open = vm_open,
-};
-
-static int mmap(struct file *filp, struct vm_area_struct *vma)
-{
-    pr_info("mmap\n");
-    vma->vm_ops = &vm_ops;
-    vma->vm_flags |= VM_DONTEXPAND | VM_DONTDUMP;
-    vma->vm_private_data = filp->private_data;
-    vm_open(vma);
-    return 0;
-}
-
-static int open(struct inode *inode, struct file *filp)
-{
-    struct mmap_info *info;
-
-    pr_info("open\n");
-    info = kmalloc(sizeof(struct mmap_info), GFP_KERNEL);
-    pr_info("virt_to_phys = 0x%llx\n", (unsigned long long)virt_to_phys((void *)info));
-    info->data = (char *)get_zeroed_page(GFP_KERNEL);
-    memcpy(info->data, "asdf", BUFFER_SIZE);
-    filp->private_data = info;
-    return 0;
-}
-
-static ssize_t read(struct file *filp, char __user *buf, size_t len, loff_t *off)
-{
-    struct mmap_info *info;
-    int ret;
-
-    pr_info("read\n");
-    info = filp->private_data;
-    ret = min(len, (size_t)BUFFER_SIZE);
-    if (raw_copy_to_user(buf, info->data, ret)) {
-        ret = -EFAULT;
-    }
+ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *offset){
+    size_t ret = copy_to_user(buffer, message, len);
+    printk(KERN_INFO "Char_Driver: Sent %zu characters to the user\n", len);
     return ret;
 }
 
-static ssize_t write(struct file *filp, const char __user *buf, size_t len, loff_t *off)
-{
-    struct mmap_info *info;
-
-    pr_info("write\n");
-    info = filp->private_data;
-    if (raw_copy_from_user(info->data, buf, min(len, (size_t)BUFFER_SIZE))) {
-        return -EFAULT;
-    } else {
-        return len;
-    }
+ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset){
+    size_t ret = copy_from_user(message,buffer,len);
+    printk(KERN_INFO "Char_Driver: Received %zu characters from the user\n", len);
+    return ret;
 }
 
-static int release(struct inode *inode, struct file *filp)
-{
-    struct mmap_info *info;
-
-    pr_info("release\n");
-    info = filp->private_data;
-    free_page((unsigned long)info->data);
-    kfree(info);
-    filp->private_data = NULL;
-    return 0;
+static int dev_release(struct inode *inodep, struct file *filep){
+   printk(KERN_INFO "Char_Driver: Device successfully closed\n");
+   return 0;
 }
 
-static const struct file_operations fops = {
-    .mmap = mmap,
-    .open = open,
-    .release = release,
-    .read = read,
-    .write = write,
-};
-
-static int myinit(void)
-{
-    proc_create(filename, 0, NULL, &fops);
-    return 0;
-}
-
-static void myexit(void)
-{
-    remove_proc_entry(filename, NULL);
-}
-
-module_init(myinit)
-module_exit(myexit)
-MODULE_LICENSE("GPL");
+module_init(char_init);
+module_exit(char_exit);
