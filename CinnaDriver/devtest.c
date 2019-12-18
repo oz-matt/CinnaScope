@@ -2,6 +2,7 @@
 #include<fcntl.h>
 #include<string.h>
 #include<malloc.h>
+#include <unistd.h>
 
 #define DEVICE "/dev/cinnadevice"
 int debug = 1, fd = 0;
