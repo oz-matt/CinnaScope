@@ -26,7 +26,17 @@ static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
 	{ 0xd1b09e08, "module_layout" },
+	{ 0x6091b333, "unregister_chrdev_region" },
+	{ 0x9ee9d2da, "cdev_del" },
+	{ 0x9c1cb9ae, "cdev_add" },
+	{ 0x94205d0d, "cdev_alloc" },
+	{ 0xe3ec2f2b, "alloc_chrdev_region" },
+	{ 0x362ef408, "_copy_from_user" },
+	{ 0xb44ad4b3, "_copy_to_user" },
+	{ 0x88db9f48, "__check_object_size" },
+	{ 0x25170ad2, "down_interruptible" },
 	{ 0x7c32d0f0, "printk" },
+	{ 0xcf2a6966, "up" },
 	{ 0xbdfb6dbb, "__fentry__" },
 };
 
