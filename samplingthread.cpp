@@ -1,8 +1,11 @@
 #include "samplingthread.h"
 #include "signaldata.h"
 #include "plot.h"
+#include "dummydata.h"
 #include <qwt_math.h>
 #include <math.h>
+
+INCLUDE_DUMMY_DATA;
 
 #if QT_VERSION < 0x040600
 #define qFastSin(x) ::sin(x)

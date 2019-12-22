@@ -39,6 +39,7 @@ SOURCES += \
     oscwidget.cpp
 
 HEADERS += \
+    dummydata.h \
         mainwindow.h \
     plot.h \
     curvedata.h \

@@ -79,7 +79,7 @@ private:
 Plot::Plot( QWidget *parent ):
     QwtPlot( parent ),
     d_paintedPoints( 0 ),
-    d_interval( 0.0, 10.0 ),
+    d_interval( 0.0, 0.01 ),
     d_timerId( -1 )
 {
     d_directPainter = new QwtPlotDirectPainter();
