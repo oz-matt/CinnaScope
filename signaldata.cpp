@@ -31,6 +31,7 @@ public:
 
             if ( sample.y() < boundingRect.top() )
                 boundingRect.setTop( sample.y() );
+
         }
     }
 

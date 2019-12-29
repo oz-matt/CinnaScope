@@ -56,7 +56,7 @@ double SamplingThread::value( double timeStamp ) const
     //const double x = ::fmod( timeStamp, period );
     //const double v = d_amplitude * qFastSin( x / period * 2 * M_PI );
 
-    const double v = dummydata[i++];
+    const double v = dummydata[i++];//(double)5.0 * dummydata[i++];
     if (i > 999) i = 0;
 
     return v;
