@@ -221,6 +221,8 @@ void Plot::incrementInterval()
     replot();
 }
 
+extern double curr_time;
+
 void Plot::timerEvent( QTimerEvent *event )
 {
     if ( event->timerId() == d_timerId )
@@ -228,7 +230,12 @@ void Plot::timerEvent( QTimerEvent *event )
         updateCurve();
 
         const double elapsed = d_clock.elapsed() / 1000.0;
-        if ( elapsed > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
+
+        double maxval = d_interval.maxValue();
+        double minval = d_interval.minValue();
+
+        if ( curr_time > (maxval + (maxval - minval)) )
+            qDebug("Maxval: %f      Minval: %f", maxval, minval);
             incrementInterval();
 
         return;

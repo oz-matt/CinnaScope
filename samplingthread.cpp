@@ -55,10 +55,14 @@ void SamplingThread::sample( double elapsed )
     {
         int i;
         for(i=0;i<DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL;i++){
-            const QPointF s( elapsed, value( elapsed ) );
+
+            double val = value(0);
+            const QPointF s( curr_time, val );
             SignalData::instance().append( s );
             curr_time = curr_time + TIMESTEP;
-            //qDebug("elapsed: %f", elapsed);
+
+
+            qDebug("elapsed: %f   val: %f", elapsed, val);
         }
     }
 }
