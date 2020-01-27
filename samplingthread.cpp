@@ -38,12 +38,26 @@ double SamplingThread::amplitude() const
     return d_amplitude;
 }
 
+//Right now we set sample() to be called every 10ms (100 times/sec)
+#define SAMPLE_FXN_CALLS_PER_SEC 100
+#define INCOMING_SAMPLES_PER_SEC 100
+#define DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL 1
+
+#define TIMESTEP .01
+
+
+double curr_time = 0;
+
 void SamplingThread::sample( double elapsed )
 {
     if ( d_frequency > 0.0 )
     {
-        const QPointF s( elapsed, value( elapsed ) );
-        SignalData::instance().append( s );
+        int i;
+        for(i=0;i<DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL;i++){
+            const QPointF s( curr_time, value( elapsed ) );
+            SignalData::instance().append( s );
+            curr_time = curr_time + TIMESTEP;
+        }
     }
 }
 

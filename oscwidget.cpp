@@ -14,7 +14,7 @@ OscWidget::OscWidget( QWidget *parent ):
     //const double intervalLength = 10.0; // seconds
 
     d_plot = new Plot( this );
-    d_plot->setIntervalLength( 0.1 );
+    d_plot->setIntervalLength( 1.0 );
 
     timer = new QTimer(this);
     timer->setInterval(100);
@@ -27,7 +27,7 @@ OscWidget::OscWidget( QWidget *parent ):
     d_frequencyKnob->setValue( 17.8 );
 
     d_intervalWheel = new WheelBox( "Displayed [s]", 0.1, 1.0, 0.01, this );
-    d_intervalWheel->setValue( 0.01 );
+    d_intervalWheel->setValue( 1.0 );
 
     d_timerWheel = new WheelBox( "Sample Interval [ms]", 0.0, 20.0, 0.1, this );
     d_timerWheel->setValue( 10.0 );
