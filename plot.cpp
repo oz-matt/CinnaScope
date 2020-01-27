@@ -11,6 +11,7 @@
 #include <qwt_painter.h>
 #include <qevent.h>
 #include<QDebug>
+
 class Canvas: public QwtPlotCanvas
 {
 public:
@@ -78,7 +79,7 @@ private:
 Plot::Plot( QWidget *parent ):
     QwtPlot( parent ),
     d_paintedPoints( 0 ),
-    d_interval( 0.0, 10.0 ),
+    d_interval( 0.0, 0.01 ),
     d_timerId( -1 )
 {
     d_directPainter = new QwtPlotDirectPainter();
@@ -90,7 +91,7 @@ Plot::Plot( QWidget *parent ):
 
     setAxisTitle( QwtPlot::xBottom, "Time [s]" );
     setAxisScale( QwtPlot::xBottom, d_interval.minValue(), d_interval.maxValue() );
-    setAxisScale( QwtPlot::yLeft, -200.0, 200.0 );
+    setAxisScale( QwtPlot::yLeft, -2.0, 2.0 );
 
     QwtPlotGrid *grid = new QwtPlotGrid();
     grid->setPen( Qt::gray, 0.0, Qt::DotLine );
@@ -151,7 +152,6 @@ void Plot::setIntervalLength( double interval )
 
 void Plot::updateMe()
 {
-    qDebug() << "C++ Style Debug Message";
     updateCurve();
 }
 
@@ -228,7 +228,7 @@ void Plot::timerEvent( QTimerEvent *event )
         updateCurve();
 
         const double elapsed = d_clock.elapsed() / 1000.0;
-        if ( elapsed > d_interval.maxValue() )
+        if ( elapsed > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
             incrementInterval();
 
         return;

@@ -43,7 +43,8 @@ HEADERS += \
     samplingthread.h \
     knob.h \
     wheelbox.h \
-    oscwidget.h
+    oscwidget.h \
+    dummydata.h
 
 FORMS += \
         mainwindow.ui
