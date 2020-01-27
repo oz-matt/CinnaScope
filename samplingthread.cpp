@@ -4,6 +4,7 @@
 #include "dummydata.h"
 #include <qwt_math.h>
 #include <math.h>
+#include <QDebug>
 
 INCLUDE_DUMMY_DATA;
 
@@ -54,9 +55,10 @@ void SamplingThread::sample( double elapsed )
     {
         int i;
         for(i=0;i<DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL;i++){
-            const QPointF s( curr_time, value( elapsed ) );
+            const QPointF s( elapsed, value( elapsed ) );
             SignalData::instance().append( s );
             curr_time = curr_time + TIMESTEP;
+            //qDebug("elapsed: %f", elapsed);
         }
     }
 }
