@@ -89,7 +89,7 @@ Plot::Plot( QWidget *parent ):
 
     plotLayout()->setAlignCanvasToScales( true );
 
-    setAxisTitle( QwtPlot::xBottom, "Time [s]" );
+    //setAxisTitle( QwtPlot::xBottom, "Time [s]" );
     setAxisScale( QwtPlot::xBottom, d_interval.minValue(), d_interval.maxValue() );
     setAxisScale( QwtPlot::yLeft, -2.0, 2.0 );
 
@@ -230,15 +230,18 @@ void Plot::timerEvent( QTimerEvent *event )
         updateCurve();
 
         const double elapsed = d_clock.elapsed() / 1000.0;
-
-        double maxval = d_interval.maxValue();
-        double minval = d_interval.minValue();
-
-        if ( curr_time > (maxval + (maxval - minval)) )
-            qDebug("Maxval: %f      Minval: %f", maxval, minval);
-            incrementInterval();
+        if ( curr_time > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
+                    incrementInterval();
+        //qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
 
         return;
+        /*double maxval = d_interval.maxValue();
+        double minval = d_interval.minValue();
+        if ( elapsed > (maxval + (maxval - minval)) )
+            qDebug("Maxval: %f      Minval: %f", maxval, minval);
+            incrementInterval();
+        return;*/
+
     }
 
     QwtPlot::timerEvent( event );
