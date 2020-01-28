@@ -4,6 +4,7 @@
 #include "dummydata.h"
 #include <qwt_math.h>
 #include <math.h>
+#include <QDebug>
 
 INCLUDE_DUMMY_DATA;
 
@@ -40,10 +41,10 @@ double SamplingThread::amplitude() const
 
 //Right now we set sample() to be called every 10ms (100 times/sec)
 #define SAMPLE_FXN_CALLS_PER_SEC 100
-#define INCOMING_SAMPLES_PER_SEC 100
-#define DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL 1
+#define INCOMING_SAMPLES_PER_SEC 200
+#define DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL 2
 
-#define TIMESTEP .01
+#define TIMESTEP .005
 
 
 double curr_time = 0;
@@ -54,9 +55,14 @@ void SamplingThread::sample( double elapsed )
     {
         int i;
         for(i=0;i<DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL;i++){
-            const QPointF s( curr_time, value( elapsed ) );
+
+            double val = value(0);
+            const QPointF s( curr_time, val );
             SignalData::instance().append( s );
             curr_time = curr_time + TIMESTEP;
+
+
+            qDebug("curr_time: %f   val: %f", curr_time, val);
         }
     }
 }
