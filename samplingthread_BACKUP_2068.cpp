@@ -61,8 +61,12 @@ void SamplingThread::sample( double elapsed )
             SignalData::instance().append( s );
             curr_time = curr_time + TIMESTEP;
 
-            //qDebug("curr_time: %f   val: %f", curr_time, val);
 
+<<<<<<< HEAD
+            //qDebug("curr_time: %f   val: %f", curr_time, val);
+=======
+            qDebug("curr_time: %f   val: %f", curr_time, val);
+>>>>>>> 5603458e550da981f8bcf7556633acc32040f8b5
         }
     }
 }
@@ -72,11 +76,17 @@ int i = 0;
 double SamplingThread::value( double timeStamp ) const
 {
     //const double period = 1.0 / d_frequency;
-
+<<<<<<< HEAD
 
     //const double x = ::fmod( timeStamp, period );
     //const double v = d_amplitude * qFastSin( x / period * 2 * M_PI );
 
+=======
+
+    //const double x = ::fmod( timeStamp, period );
+    //const double v = d_amplitude * qFastSin( x / period * 2 * M_PI );
+
+>>>>>>> 5603458e550da981f8bcf7556633acc32040f8b5
     const double v = dummydata[i++];//(double)5.0 * dummydata[i++];
     if (i > 999) i = 0;
 

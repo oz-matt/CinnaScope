@@ -92,9 +92,11 @@ Plot::Plot( QWidget *parent ):
     //setAxisTitle( QwtPlot::xBottom, "Time [s]" );
     setAxisScale( QwtPlot::xBottom, d_interval.minValue(), d_interval.maxValue() );
     setAxisScale( QwtPlot::yLeft, -2.0, 2.0 );
-
+<<<<<<< HEAD
 
     QwtPlot::enableAxis(QwtPlot::xBottom, false);
+=======
+>>>>>>> 5603458e550da981f8bcf7556633acc32040f8b5
 
     QwtPlotGrid *grid = new QwtPlotGrid();
     grid->setPen( Qt::gray, 0.0, Qt::DotLine );
@@ -232,19 +234,33 @@ void Plot::timerEvent( QTimerEvent *event )
     {
         updateCurve();
 
+<<<<<<< HEAD
         //const double elapsed = d_clock.elapsed() / 1000.0;
         if ( curr_time > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
                     incrementInterval();
         qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
+=======
+        const double elapsed = d_clock.elapsed() / 1000.0;
+        if ( curr_time > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
+                    incrementInterval();
+        //qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
+>>>>>>> 5603458e550da981f8bcf7556633acc32040f8b5
 
         return;
         /*double maxval = d_interval.maxValue();
         double minval = d_interval.minValue();
+<<<<<<< HEAD
 
         if ( elapsed > (maxval + (maxval - minval)) )
             qDebug("Maxval: %f      Minval: %f", maxval, minval);
             incrementInterval();
-*/
+
+=======
+        if ( elapsed > (maxval + (maxval - minval)) )
+            qDebug("Maxval: %f      Minval: %f", maxval, minval);
+            incrementInterval();
+>>>>>>> 5603458e550da981f8bcf7556633acc32040f8b5
+        return;*/
 
     }
 
