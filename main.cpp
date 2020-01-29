@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.resize(800, 400);
 
+
+
     w.show();
 
     bool ok = app.exec();

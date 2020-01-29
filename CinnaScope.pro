@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-CONFIG   += qwt
+CONFIG   += qwt full
 
 INCLUDEPATH += /usr/local/qwt-6.1.4/include
 LIBS += -L/usr/local/qwt-6.1.4/lib -lqwt
@@ -28,8 +28,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
+    main.cpp \
+    mainwindow.cpp \
     plot.cpp \
     curvedata.cpp \
     signaldata.cpp \
@@ -40,7 +40,7 @@ SOURCES += \
 
 HEADERS += \
     dummydata.h \
-        mainwindow.h \
+    mainwindow.h \
     plot.h \
     curvedata.h \
     signaldata.h \
@@ -48,6 +48,15 @@ HEADERS += \
     knob.h \
     wheelbox.h \
     oscwidget.h
+
+    full {
+        SOURCES += \
+        pcie_lib/PCIE.c
+
+        HEADERS += \
+        pcie_lib/PCIE.h \
+        pcie_lib/TERASIC_PCIE.h \
+    }
 
 FORMS += \
         mainwindow.ui

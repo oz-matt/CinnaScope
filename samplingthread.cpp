@@ -62,7 +62,7 @@ void SamplingThread::sample( double elapsed )
             curr_time = curr_time + TIMESTEP;
 
 
-            qDebug("curr_time: %f   val: %f", curr_time, val);
+            //qDebug("curr_time: %f   val: %f", curr_time, val);
         }
     }
 }

@@ -223,17 +223,22 @@ void Plot::incrementInterval()
 
 extern double curr_time;
 
+void print_bram_address_ptr(void)
+{
+    //if (PCIE_DmaRead(hPCIe, LocalAddr, pRead, nTestSize)
+}
+
 void Plot::timerEvent( QTimerEvent *event )
 {
     if ( event->timerId() == d_timerId )
     {
         updateCurve();
 
-        const double elapsed = d_clock.elapsed() / 1000.0;
         if ( curr_time > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
-                    incrementInterval();
-        //qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
-
+        {
+            incrementInterval();
+            qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
+        }
         return;
         /*double maxval = d_interval.maxValue();
         double minval = d_interval.minValue();
