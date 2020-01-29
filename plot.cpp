@@ -93,6 +93,8 @@ Plot::Plot( QWidget *parent ):
     setAxisScale( QwtPlot::xBottom, d_interval.minValue(), d_interval.maxValue() );
     setAxisScale( QwtPlot::yLeft, -2.0, 2.0 );
 
+    QwtPlot::enableAxis(QwtPlot::xBottom, false);
+
     QwtPlotGrid *grid = new QwtPlotGrid();
     grid->setPen( Qt::gray, 0.0, Qt::DotLine );
     grid->enableX( true );
@@ -229,10 +231,10 @@ void Plot::timerEvent( QTimerEvent *event )
     {
         updateCurve();
 
-        const double elapsed = d_clock.elapsed() / 1000.0;
+        //const double elapsed = d_clock.elapsed() / 1000.0;
         if ( curr_time > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
                     incrementInterval();
-        //qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
+        qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
 
         return;
         /*double maxval = d_interval.maxValue();
