@@ -20,24 +20,24 @@ OscWidget::OscWidget( QWidget *parent ):
     timer->setInterval(100);
     connect(timer, &QTimer::timeout, d_plot, &Plot::updateMe);
 
-    d_amplitudeKnob = new Knob( "Amplitude", 0.0, 200.0, this );
-    d_amplitudeKnob->setValue( 160.0 );
+    d_amplitudeKnob = new Knob( "Amplitude", 2, 20, this );
+    d_amplitudeKnob->setValue( 2 );
 
-    d_frequencyKnob = new Knob( "Frequency [Hz]", 0.1, 20.0, this );
-    d_frequencyKnob->setValue( 17.8 );
+    //d_frequencyKnob = new Knob( "Frequency [Hz]", 0.1, 20.0, this );
+    //d_frequencyKnob->setValue( 17.8 );
 
-    d_intervalWheel = new WheelBox( "Displayed [s]", 0.1, 1.0, 0.01, this );
-    d_intervalWheel->setValue( 1.0 );
+    //d_intervalWheel = new WheelBox( "Displayed [s]", 0.1, 1.0, 0.01, this );
+    //d_intervalWheel->setValue( 1.0 );
 
-    d_timerWheel = new WheelBox( "Sample Interval [ms]", 0.0, 20.0, 0.1, this );
-    d_timerWheel->setValue( 10.0 );
+    //d_timerWheel = new WheelBox( "Sample Interval [ms]", 0.0, 20.0, 0.1, this );
+    //d_timerWheel->setValue( 10.0 );
 
     QVBoxLayout* vLayout1 = new QVBoxLayout();
-    vLayout1->addWidget( d_intervalWheel );
-    vLayout1->addWidget( d_timerWheel );
-    vLayout1->addStretch( 10 );
+    //vLayout1->addWidget( d_intervalWheel );
+    //vLayout1->addWidget( d_timerWheel );
+    //vLayout1->addStretch( 10 );
     vLayout1->addWidget( d_amplitudeKnob );
-    vLayout1->addWidget( d_frequencyKnob );
+    //vLayout1->addWidget( d_frequencyKnob );
 
     QHBoxLayout *layout = new QHBoxLayout( this );
     layout->addWidget( d_plot, 10 );
@@ -45,13 +45,13 @@ OscWidget::OscWidget( QWidget *parent ):
 
     connect( d_amplitudeKnob, SIGNAL( valueChanged( double ) ),
         SIGNAL( amplitudeChanged( double ) ) );
-    connect( d_frequencyKnob, SIGNAL( valueChanged( double ) ),
-        SIGNAL( frequencyChanged( double ) ) );
-    connect( d_timerWheel, SIGNAL( valueChanged( double ) ),
-        SIGNAL( signalIntervalChanged( double ) ) );
+    //connect( d_frequencyKnob, SIGNAL( valueChanged( double ) ),
+        //SIGNAL( frequencyChanged( double ) ) );
+    //connect( d_timerWheel, SIGNAL( valueChanged( double ) ),
+        //SIGNAL( signalIntervalChanged( double ) ) );
 
-    connect( d_intervalWheel, SIGNAL( valueChanged( double ) ),
-        d_plot, SLOT( setIntervalLength( double ) ) );
+    //connect( d_intervalWheel, SIGNAL( valueChanged( double ) ),
+        //d_plot, SLOT( setIntervalLength( double ) ) );
 }
 
 void OscWidget::start()
@@ -62,7 +62,7 @@ void OscWidget::start()
 
 double OscWidget::frequency() const
 {
-    return d_frequencyKnob->value();
+    return 1.0 ;//d_frequencyKnob->value();
 }
 
 double OscWidget::amplitude() const
@@ -72,5 +72,5 @@ double OscWidget::amplitude() const
 
 double OscWidget::signalInterval() const
 {
-    return d_timerWheel->value();
+    return 1.0 ;//d_timerWheel->value();
 }

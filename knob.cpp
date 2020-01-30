@@ -43,6 +43,21 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
         this, SIGNAL( valueChanged( double ) ) );
 }
 
+double posknob = 2;
+
+void Knob::wheelEvent(QWheelEvent *event)
+{
+    QPoint numDegrees = event->angleDelta() / 8;
+
+    if (numDegrees.y()  > 0)
+    {
+        d_knob->setValue(posknob);
+        posknob = posknob + 2;
+        if (posknob >= 20) posknob = 2;
+    }
+
+}
+
 QSize Knob::sizeHint() const
 {
     QSize sz1 = d_knob->sizeHint();

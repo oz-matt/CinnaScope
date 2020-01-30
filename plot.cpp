@@ -94,20 +94,13 @@ Plot::Plot( QWidget *parent ):
     setAxisScale( QwtPlot::yLeft, -2.0, 2.0 );
 
 
-    QwtPlot::enableAxis(QwtPlot::xBottom, false);
 
-    QwtPlotGrid *grid = new QwtPlotGrid();
-    grid->setPen( Qt::gray, 0.0, Qt::DotLine );
-    grid->enableX( true );
-    grid->enableXMin( true );
-    grid->enableY( true );
-    grid->enableYMin( false );
-    grid->attach( this );
+
 
     d_origin = new QwtPlotMarker();
-    d_origin->setLineStyle( QwtPlotMarker::Cross );
+    //d_origin->setLineStyle( QwtPlotMarker::Cross );
     d_origin->setValue( d_interval.minValue() + d_interval.width() / 2.0, 0.0 );
-    d_origin->setLinePen( Qt::gray, 0.0, Qt::DashLine );
+    //d_origin->setLinePen( Qt::gray, 0.0, Qt::DashLine );
     d_origin->attach( this );
 
     d_curve = new QwtPlotCurve();
@@ -117,6 +110,19 @@ Plot::Plot( QWidget *parent ):
     d_curve->setPaintAttribute( QwtPlotCurve::ClipPolygons, false );
     d_curve->setData( new CurveData() );
     d_curve->attach( this );
+
+    QwtPlot::enableAxis(QwtPlot::xBottom, false);
+    //QwtPlot::setAxisMaxMinor(QwtPlot::xBottom, 16);
+    QwtPlot::setAxisMaxMajor(QwtPlot::xBottom, 16);
+
+    QwtPlotGrid *grid = new QwtPlotGrid();
+    grid->setPen( Qt::gray, 0.0, Qt::DotLine );
+    grid->enableX( true );
+    grid->enableXMin( false );
+    grid->enableY( true );
+    grid->enableYMin( false );
+    grid->attach( this );
+
 }
 
 Plot::~Plot()
@@ -146,10 +152,31 @@ void Plot::setIntervalLength( double interval )
     if ( interval > 0.0 && interval != d_interval.width() )
     {
         d_interval.setMaxValue( d_interval.minValue() + interval );
-        setAxisScale( QwtPlot::xBottom,
-            d_interval.minValue(), d_interval.maxValue() );
+        //setAxisScale( QwtPlot::xBottom,
+        //    d_interval.minValue(), d_interval.maxValue() );
 
-        replot();
+        QwtScaleDiv div(d_interval.minValue(), d_interval.maxValue());
+
+        double inc = ((d_interval.maxValue() - d_interval.minValue()) / 8.0);
+
+                //QList<double> majorTicks;
+                //majorTicks << 0 << 75 << 150;
+
+                QList<double> majorTicks;
+                //mediumTicks << 15 << 30 << 45 << 60 << 90 << 105 << 120 << 135;
+
+                int i;
+                for(i=0;i<8;i++)
+                {
+                    majorTicks << d_interval.minValue() + (i * inc);
+                }
+
+                //div.setTicks(QwtScaleDiv::MajorTick, majorTicks);
+                div.setTicks(QwtScaleDiv::MajorTick, majorTicks);
+
+                setAxisScaleDiv(QwtPlot::xBottom, div);
+
+                replot();
     }
 }
 
@@ -216,6 +243,8 @@ void Plot::incrementInterval()
             ticks[j] += d_interval.width();
         scaleDiv.setTicks( i, ticks );
     }
+
+
     setAxisScaleDiv( QwtPlot::xBottom, scaleDiv );
 
     d_origin->setValue( d_interval.minValue() + d_interval.width() / 2.0, 0.0 );

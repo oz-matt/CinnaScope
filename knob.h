@@ -16,6 +16,8 @@ public:
     Knob( const QString &title,
         double min, double max, QWidget *parent = NULL );
 
+    void wheelEvent(QWheelEvent *event);
+
     virtual QSize sizeHint() const;
 
     void setValue( double value );
