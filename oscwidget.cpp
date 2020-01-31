@@ -7,6 +7,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qtimer.h>
+#include <qlineedit.h>
 
 OscWidget::OscWidget( QWidget *parent ):
     QWidget( parent )
@@ -39,9 +40,17 @@ OscWidget::OscWidget( QWidget *parent ):
     vLayout1->addWidget( d_amplitudeKnob );
     //vLayout1->addWidget( d_frequencyKnob );
 
+    QLabel* le = new QLabel("Line!");
+
+    le->setAlignment(Qt::AlignRight);
+
+    QVBoxLayout* vLayout2 = new QVBoxLayout();
+    vLayout2->addWidget( d_plot, 10 );
+    vLayout2->addWidget(le);
+
     QHBoxLayout *layout = new QHBoxLayout( this );
-    layout->addWidget( d_plot, 10 );
-    layout->addLayout( vLayout1 );
+    layout->addLayout(vLayout2, 1);
+    layout->addLayout(vLayout1, 0);
 
     connect( d_amplitudeKnob, SIGNAL( valueChanged( double ) ),
         SIGNAL( amplitudeChanged( double ) ) );

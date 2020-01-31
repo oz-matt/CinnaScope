@@ -3,7 +3,7 @@
 
 #include <qwidget.h>
 
-class QwtKnob;
+class CinnaFixedKnob;
 class QLabel;
 
 class Knob: public QWidget
@@ -33,7 +33,7 @@ protected:
     virtual void resizeEvent( QResizeEvent * );
 
 private:
-    QwtKnob *d_knob;
+    CinnaFixedKnob *d_knob;
     QLabel *d_label;
 };
 

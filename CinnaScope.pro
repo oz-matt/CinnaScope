@@ -33,7 +33,9 @@ SOURCES += \
     samplingthread.cpp \
     knob.cpp \
     wheelbox.cpp \
-    oscwidget.cpp
+    oscwidget.cpp \
+    cinnafixedknob.cpp \
+    cinnaroundscaledraw.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,7 +46,9 @@ HEADERS += \
     knob.h \
     wheelbox.h \
     oscwidget.h \
-    dummydata.h
+    dummydata.h \
+    cinnafixedknob.h \
+    cinnaroundscaledraw.h
 
 FORMS += \
         mainwindow.ui

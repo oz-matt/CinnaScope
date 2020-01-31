@@ -6,13 +6,14 @@
 #include <qwt_scale_engine.h>
 #include <qlabel.h>
 #include <qevent.h>
+#include <cinnafixedknob.h>
 
 Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
     QWidget( parent )
 {
     QFont font( "Helvetica", 10 );
 
-    d_knob = new QwtKnob( this );
+    d_knob = new CinnaFixedKnob( this );
     d_knob->setFont( font );
 
     QwtScaleDiv scaleDiv =
@@ -27,7 +28,7 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
             ticks.append( max );
     }
     scaleDiv.setTicks( QwtScaleDiv::MajorTick, ticks );
-    d_knob->setScale( scaleDiv );
+    //d_knob->setScale( scaleDiv );
 
     d_knob->setKnobWidth( 50 );
 
@@ -35,6 +36,8 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
     d_label = new QLabel( title, this );
     d_label->setFont( font );
     d_label->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
+
+    d_knob->setKnobStyle(QwtKnob::Styled);
 
     setSizePolicy( QSizePolicy::MinimumExpanding,
         QSizePolicy::MinimumExpanding );
