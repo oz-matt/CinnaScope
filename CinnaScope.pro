@@ -7,8 +7,8 @@
 QT       += core gui
 CONFIG   += qwt full
 
-INCLUDEPATH += /usr/local/qwt-6.1.4/include
-LIBS += -L/usr/local/qwt-6.1.4/lib -lqwt
+INCLUDEPATH += /usr/local/qwt-6.1.5-svn/include
+LIBS += -L/usr/local/qwt-6.1.5-svn/lib -lqwt
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -36,7 +36,8 @@ SOURCES += \
     samplingthread.cpp \
     knob.cpp \
     wheelbox.cpp \
-    oscwidget.cpp
+    oscwidget.cpp \
+    cinnapcieinterface.cpp
 
 HEADERS += \
     dummydata.h \
@@ -47,7 +48,8 @@ HEADERS += \
     samplingthread.h \
     knob.h \
     wheelbox.h \
-    oscwidget.h
+    oscwidget.h \
+    cinnapcieinterface.h
 
     full {
         SOURCES += \

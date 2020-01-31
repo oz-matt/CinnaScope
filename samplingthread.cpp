@@ -41,10 +41,10 @@ double SamplingThread::amplitude() const
 
 //Right now we set sample() to be called every 10ms (100 times/sec)
 #define SAMPLE_FXN_CALLS_PER_SEC 100
-#define INCOMING_SAMPLES_PER_SEC 200
+#define INCOMING_SAMPLES_PER_SEC 100
 #define DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL 2
 
-#define TIMESTEP .005
+#define TIMESTEP .01
 
 
 double curr_time = 0;

@@ -14,7 +14,7 @@ OscWidget::OscWidget( QWidget *parent ):
     //const double intervalLength = 10.0; // seconds
 
     d_plot = new Plot( this );
-    d_plot->setIntervalLength( 0.5 );
+    d_plot->setIntervalLength( 1.0 );
 
     timer = new QTimer(this);
     timer->setInterval(100);
