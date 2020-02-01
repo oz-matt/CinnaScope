@@ -8,7 +8,7 @@ QT       += core gui
 CONFIG   += qwt full
 
 INCLUDEPATH += /usr/local/qwt-6.1.5-svn/include
-LIBS += -L/usr/local/qwt-6.1.5-svn/lib -lqwt
+LIBS += -L/usr/local/qwt-6.1.5-svn/lib -lqwt -L/home/matt/CinnaScope/pcie_lib -ldl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -58,6 +58,13 @@ HEADERS += \
         HEADERS += \
         pcie_lib/PCIE.h \
         pcie_lib/TERASIC_PCIE.h \
+
+        INCLUDEPATH += pcie_lib/
+
+        #QMAKE_CXXFLAGS += -ldl
+        QMAKE_LFLAGS += -I/home/matt/CinnaScope/pcie_lib/terasic_pcie_qsys.so -ldl
+
+        #LIBS += /home/matt/CinnaScope/pcie_lib/terasic_pcie_qsys.so
     }
 
 FORMS += \
