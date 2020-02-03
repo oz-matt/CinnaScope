@@ -62,8 +62,13 @@ OscWidget::OscWidget( QWidget *parent ):
 
 
     connect( d_amplitudeKnob, SIGNAL( wheelEvent(QWheelEvent*) ),
-            this, SLOT( updateTimePerDivText(QWheelEvent*) ) );
-
+            this, SLOT( updateTimePerDivTextFromScroll(QWheelEvent*) ) );
+    connect( d_amplitudeKnob, SIGNAL( StartMouseDragListen(QMouseEvent*) ),
+            this, SLOT( StartMouseDragListen(QMouseEvent*) ) );
+    connect( d_amplitudeKnob, SIGNAL( ContinueMouseDragListen(QMouseEvent*) ),
+            this, SLOT( ContinueMouseDragListen(QMouseEvent*) ) );
+    connect( d_amplitudeKnob, SIGNAL( StopMouseDragListen(QMouseEvent*) ),
+            this, SLOT( StopMouseDragListen(QMouseEvent*) ) );
 
     //connect( d_frequencyKnob, SIGNAL( valueChanged( double ) ),
         //SIGNAL( frequencyChanged( double ) ) );
@@ -97,28 +102,64 @@ double OscWidget::signalInterval() const
 
 double posknob = 5;
 
-void OscWidget::updateTimePerDivText(QWheelEvent *event)
+void OscWidget::incrementTimePerDiv()
+{
+    posknob += 1;
+    if (posknob >= 10) posknob = 0;
+    d_amplitudeKnob->setValue(posknob);
+    cstate.incrementTimePerDiv();
+    d_plot->setIntervalLength(cstate.getTimePerDivInterval());
+    le->setText(cstate.getTimePerDivString());
+}
+
+void OscWidget::decrementTimePerDiv()
+{
+    posknob -= 1;
+    if (posknob < 0) posknob = 9;
+    d_amplitudeKnob->setValue(posknob);
+    cstate.decrementTimePerDiv();
+    d_plot->setIntervalLength(cstate.getTimePerDivInterval());
+    le->setText(cstate.getTimePerDivString());
+}
+
+void OscWidget::updateTimePerDivTextFromScroll(QWheelEvent *event)
 {
     QPoint numDegrees = event->angleDelta() / 8;
 
-    qDebug("y: %d", numDegrees.y());
-
     if (numDegrees.y()  > 0)
     {
-        posknob += 1;
-        if (posknob >= 10) posknob = 0;
-        d_amplitudeKnob->setValue(posknob);
-        cstate.incrementTimePerDiv();
-        d_plot->setIntervalLength(cstate.getTimePerDivInterval());
-        le->setText(cstate.getTimePerDivString());
+        this->incrementTimePerDiv();
     }
     else
     {
-        posknob -= 1;
-        if (posknob < 0) posknob = 9;
-        d_amplitudeKnob->setValue(posknob);
-        cstate.decrementTimePerDiv();
-        d_plot->setIntervalLength(cstate.getTimePerDivInterval());
-        le->setText(cstate.getTimePerDivString());
+        this->decrementTimePerDiv();
     }
+}
+
+signed int mpos = 0;
+
+void OscWidget::StartMouseDragListen(QMouseEvent *event)
+{
+    mpos = event->y();
+}
+
+void OscWidget::ContinueMouseDragListen(QMouseEvent *event)
+{
+    int dragSensitivity = 10;
+    qDebug("y is: %d, x is: %d", event->y(), (mpos + dragSensitivity));
+    if (event->y() > (mpos + dragSensitivity))
+    {
+        this->decrementTimePerDiv();
+        mpos = event->y();
+    }
+    else if (event->y() < (mpos - dragSensitivity))
+    {
+        this->incrementTimePerDiv();
+        mpos = event->y();
+    }
+}
+
+void OscWidget::StopMouseDragListen(QMouseEvent *event)
+{
+    mpos = 0;
 }

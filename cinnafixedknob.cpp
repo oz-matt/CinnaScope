@@ -20,10 +20,16 @@ CinnaFixedKnob::~CinnaFixedKnob()
 {
 
 }
-void CinnaFixedKnob::mouseMoveEvent(QMouseEvent * event)
-{
-    qDebug("y is: %d, x is: %d", event->y(), event->x());
-}
+
+//void CinnaFixedKnob::mouseMoveEvent(QMouseEvent * event)
+//{
+    //qDebug("y is: %d, x is: %d", event->y(), event->x());
+//}
+
+//void CinnaFixedKnob::mousePressEvent( QMouseEvent * event)
+//{
+    //qDebug("START!");
+//}
 
 double CinnaFixedKnob::scrolledTo( const QPoint &pos ) const
 {

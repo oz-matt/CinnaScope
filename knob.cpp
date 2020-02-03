@@ -6,10 +6,13 @@
 #include <qwt_scale_engine.h>
 #include <qlabel.h>
 #include <qevent.h>
+#include <QDebug>
 #include <cinnafixedknob.h>
 #include "cinnastate.h"
+#include "oscwidget.h"
 
 extern CinnaState cstate;
+extern double posknob;
 
 Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
     QWidget( parent )
@@ -50,6 +53,14 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
 
     //connect( d_knob, SIGNAL( wheelEvent(QWheelEvent *event) ),
     //    this, SLOT( updateTimePerDivText(QWheelEvent *event) ) );
+
+    connect( d_knob, SIGNAL( mousePressEvent(QMouseEvent*) ),
+            this, SIGNAL( StartMouseDragListen(QMouseEvent*) ) );
+    connect( d_knob, SIGNAL( mouseMoveEvent(QMouseEvent*) ),
+            this, SIGNAL( ContinueMouseDragListen(QMouseEvent*) ) );
+    connect( d_knob, SIGNAL( mouseReleaseEvent(QMouseEvent*) ),
+            this, SIGNAL( StopMouseDragListen(QMouseEvent*) ) );
+
 }
 
 /*void Knob::wheelEvent(QWheelEvent *event)

@@ -28,6 +28,13 @@ public:
 Q_SIGNALS:
     //double valueChanged( double );
     void wheelEvent(QWheelEvent *event);
+    //void mouseMoveEvent( QMouseEvent * event);
+    //void mousePressEvent( QMouseEvent * event);
+
+//public Q_SLOTS:
+    void StartMouseDragListen(QMouseEvent *event);
+    void ContinueMouseDragListen(QMouseEvent *event);
+    void StopMouseDragListen(QMouseEvent *event);
 
 protected:
     virtual void resizeEvent( QResizeEvent * );

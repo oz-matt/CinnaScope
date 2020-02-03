@@ -19,6 +19,9 @@ public:
     double frequency() const;
     double signalInterval() const;
 
+    void incrementTimePerDiv();
+    void decrementTimePerDiv();
+
 
 Q_SIGNALS:
     void amplitudeChanged( double );
@@ -26,9 +29,11 @@ Q_SIGNALS:
     void signalIntervalChanged( double );
 
 public Q_SLOTS:
-    void updateTimePerDivText(QWheelEvent *event);
+    void updateTimePerDivTextFromScroll(QWheelEvent *event);
 
-
+    void StartMouseDragListen(QMouseEvent *event);
+    void ContinueMouseDragListen(QMouseEvent *event);
+    void StopMouseDragListen(QMouseEvent *event);
 private:
     Knob *d_frequencyKnob;
     Knob *d_amplitudeKnob;
