@@ -157,7 +157,7 @@ void Plot::setIntervalLength( double interval )
 
         QwtScaleDiv div(d_interval.minValue(), d_interval.maxValue());
 
-        double inc = ((d_interval.maxValue() - d_interval.minValue()) / 8.0);
+        double inc = ((d_interval.maxValue() - d_interval.minValue()) / 10.0);
 
                 //QList<double> majorTicks;
                 //majorTicks << 0 << 75 << 150;
@@ -166,7 +166,7 @@ void Plot::setIntervalLength( double interval )
                 //mediumTicks << 15 << 30 << 45 << 60 << 90 << 105 << 120 << 135;
 
                 int i;
-                for(i=0;i<8;i++)
+                for(i=0;i<10;i++)
                 {
                     majorTicks << d_interval.minValue() + (i * inc);
                 }
@@ -264,7 +264,7 @@ void Plot::timerEvent( QTimerEvent *event )
         //const double elapsed = d_clock.elapsed() / 1000.0;
         if ( curr_time > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
                     incrementInterval();
-        qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
+        //qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
 
         return;
         /*double maxval = d_interval.maxValue();

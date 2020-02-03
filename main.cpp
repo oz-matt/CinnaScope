@@ -4,7 +4,7 @@
 #include "oscwidget.h"
 #include <QApplication>
 #include <QThread>
-
+#include "cinna.h"
 
 int main(int argc, char *argv[])
 {

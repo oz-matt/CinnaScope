@@ -7,6 +7,9 @@
 #include <qlabel.h>
 #include <qevent.h>
 #include <cinnafixedknob.h>
+#include "cinnastate.h"
+
+extern CinnaState cstate;
 
 Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
     QWidget( parent )
@@ -42,24 +45,35 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
     setSizePolicy( QSizePolicy::MinimumExpanding,
         QSizePolicy::MinimumExpanding );
 
-    connect( d_knob, SIGNAL( valueChanged( double ) ),
-        this, SIGNAL( valueChanged( double ) ) );
+    //connect( d_knob, SIGNAL( valueChanged( double ) ),
+    //    this, SIGNAL( valueChanged( double ) ) );
+
+    //connect( d_knob, SIGNAL( wheelEvent(QWheelEvent *event) ),
+    //    this, SLOT( updateTimePerDivText(QWheelEvent *event) ) );
 }
 
-double posknob = 2;
-
-void Knob::wheelEvent(QWheelEvent *event)
+/*void Knob::wheelEvent(QWheelEvent *event)
 {
     QPoint numDegrees = event->angleDelta() / 8;
 
+    qDebug("y: %d", numDegrees.y());
+
     if (numDegrees.y()  > 0)
     {
+        posknob += 2;
         d_knob->setValue(posknob);
-        posknob = posknob + 2;
         if (posknob >= 20) posknob = 2;
+        cstate.incrementTimePerDiv();
+    }
+    else
+    {
+        posknob -= 2;
+        d_knob->setValue(posknob);
+        if (posknob < 2) posknob = 20;
+        cstate.decrementTimePerDiv();
     }
 
-}
+}*/
 
 QSize Knob::sizeHint() const
 {

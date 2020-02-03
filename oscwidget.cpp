@@ -8,6 +8,11 @@
 #include <qlayout.h>
 #include <qtimer.h>
 #include <qlineedit.h>
+#include "cinnafixedknob.h"
+#include "cinnastate.h"
+#include <qevent.h>
+
+extern CinnaState cstate;
 
 OscWidget::OscWidget( QWidget *parent ):
     QWidget( parent )
@@ -18,11 +23,11 @@ OscWidget::OscWidget( QWidget *parent ):
     d_plot->setIntervalLength( 0.5 );
 
     timer = new QTimer(this);
-    timer->setInterval(100);
+    timer->setInterval(10);
     connect(timer, &QTimer::timeout, d_plot, &Plot::updateMe);
 
-    d_amplitudeKnob = new Knob( "Amplitude", 2, 20, this );
-    d_amplitudeKnob->setValue( 2 );
+    d_amplitudeKnob = new Knob( "Time/div", 0, 10, this );
+    d_amplitudeKnob->setValue( 5 );
 
     //d_frequencyKnob = new Knob( "Frequency [Hz]", 0.1, 20.0, this );
     //d_frequencyKnob->setValue( 17.8 );
@@ -40,7 +45,7 @@ OscWidget::OscWidget( QWidget *parent ):
     vLayout1->addWidget( d_amplitudeKnob );
     //vLayout1->addWidget( d_frequencyKnob );
 
-    QLabel* le = new QLabel("Line!");
+    le = new QLabel(cstate.getTimePerDivString());
 
     le->setAlignment(Qt::AlignRight);
 
@@ -52,8 +57,14 @@ OscWidget::OscWidget( QWidget *parent ):
     layout->addLayout(vLayout2, 1);
     layout->addLayout(vLayout1, 0);
 
-    connect( d_amplitudeKnob, SIGNAL( valueChanged( double ) ),
-        SIGNAL( amplitudeChanged( double ) ) );
+    //connect( d_amplitudeKnob, SIGNAL( valueChanged( double ) ),
+        //SIGNAL( amplitudeChanged( double ) ) );
+
+
+    connect( d_amplitudeKnob, SIGNAL( wheelEvent(QWheelEvent*) ),
+            this, SLOT( updateTimePerDivText(QWheelEvent*) ) );
+
+
     //connect( d_frequencyKnob, SIGNAL( valueChanged( double ) ),
         //SIGNAL( frequencyChanged( double ) ) );
     //connect( d_timerWheel, SIGNAL( valueChanged( double ) ),
@@ -82,4 +93,32 @@ double OscWidget::amplitude() const
 double OscWidget::signalInterval() const
 {
     return 1.0 ;//d_timerWheel->value();
+}
+
+double posknob = 5;
+
+void OscWidget::updateTimePerDivText(QWheelEvent *event)
+{
+    QPoint numDegrees = event->angleDelta() / 8;
+
+    qDebug("y: %d", numDegrees.y());
+
+    if (numDegrees.y()  > 0)
+    {
+        posknob += 1;
+        if (posknob >= 10) posknob = 0;
+        d_amplitudeKnob->setValue(posknob);
+        cstate.incrementTimePerDiv();
+        d_plot->setIntervalLength(cstate.getTimePerDivInterval());
+        le->setText(cstate.getTimePerDivString());
+    }
+    else
+    {
+        posknob -= 1;
+        if (posknob < 0) posknob = 9;
+        d_amplitudeKnob->setValue(posknob);
+        cstate.decrementTimePerDiv();
+        d_plot->setIntervalLength(cstate.getTimePerDivInterval());
+        le->setText(cstate.getTimePerDivString());
+    }
 }

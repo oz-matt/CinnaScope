@@ -35,7 +35,8 @@ SOURCES += \
     wheelbox.cpp \
     oscwidget.cpp \
     cinnafixedknob.cpp \
-    cinnaroundscaledraw.cpp
+    cinnaroundscaledraw.cpp \
+    cinnastate.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -48,7 +49,10 @@ HEADERS += \
     oscwidget.h \
     dummydata.h \
     cinnafixedknob.h \
-    cinnaroundscaledraw.h
+    cinnaroundscaledraw.h \
+    cinnastyle.h \
+    cinnastate.h \
+    cinna.h
 
 FORMS += \
         mainwindow.ui

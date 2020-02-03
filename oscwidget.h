@@ -1,5 +1,6 @@
 #include <qwidget.h>
 #include <qtimer.h>
+#include <qlabel.h>
 
 class Plot;
 class Knob;
@@ -18,10 +19,15 @@ public:
     double frequency() const;
     double signalInterval() const;
 
+
 Q_SIGNALS:
     void amplitudeChanged( double );
     void frequencyChanged( double );
     void signalIntervalChanged( double );
+
+public Q_SLOTS:
+    void updateTimePerDivText(QWheelEvent *event);
+
 
 private:
     Knob *d_frequencyKnob;
@@ -31,4 +37,5 @@ private:
 
     Plot *d_plot;
     QTimer *timer;
+    QLabel* le;
 };
