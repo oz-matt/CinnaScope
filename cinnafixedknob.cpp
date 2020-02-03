@@ -1,5 +1,7 @@
 #include "cinnafixedknob.h"
 #include "cinnaroundscaledraw.h"
+#include <QDebug>
+#include <qevent.h>
 
 CinnaFixedKnob::CinnaFixedKnob( QWidget* parent ):
     QwtKnob( parent )
@@ -18,8 +20,13 @@ CinnaFixedKnob::~CinnaFixedKnob()
 {
 
 }
+void CinnaFixedKnob::mouseMoveEvent(QMouseEvent * event)
+{
+    qDebug("y is: %d, x is: %d", event->y(), event->x());
+}
 
 double CinnaFixedKnob::scrolledTo( const QPoint &pos ) const
 {
 
 }
+

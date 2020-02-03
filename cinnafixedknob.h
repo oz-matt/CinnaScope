@@ -13,7 +13,7 @@ public:
 
 
 protected:
-
+    void mouseMoveEvent( QMouseEvent * event);
     double scrolledTo( const QPoint &pos ) const;
 
 };

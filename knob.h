@@ -26,7 +26,7 @@ public:
     QColor theme() const;
 
 Q_SIGNALS:
-    double valueChanged( double );
+    //double valueChanged( double );
     void wheelEvent(QWheelEvent *event);
 
 protected:

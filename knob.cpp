@@ -75,6 +75,7 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
 
 }*/
 
+
 QSize Knob::sizeHint() const
 {
     QSize sz1 = d_knob->sizeHint();
