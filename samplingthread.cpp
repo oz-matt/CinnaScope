@@ -52,7 +52,7 @@ double SamplingThread::amplitude() const
 
 double curr_time = 0;
 
-signed int lastAddress = 0;
+DWORD lastAddress = 0;
 
 void SamplingThread::sample( double elapsed )
 {
@@ -61,7 +61,7 @@ void SamplingThread::sample( double elapsed )
         int i;
         for(i=0;i<DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL;i++){
 
-            signed int address = 0;
+            DWORD address = 0;
 
             if(cpi.Get_BRAM_Address_Pointer(&address))
             {
@@ -73,10 +73,10 @@ void SamplingThread::sample( double elapsed )
                     //qDebug("Address: %i, Data: %d", address, cpi.pcie_read_data[address]);
                     int numNewPoints = 0;
 
-                    if((address - lastAddress) < 0)
+                    if((signed int)(address - lastAddress) < 0)
                     {
                         wrap = true;
-                        wrap_spacing = 131064 - lastAddress;
+                        wrap_spacing = 16384 - lastAddress;
                         numNewPoints = wrap_spacing + address + 1;
                     }
                     else
@@ -92,7 +92,7 @@ void SamplingThread::sample( double elapsed )
                         int j, k;
                         for(j=(wrap_spacing-1);j>=0;j--)
                         {
-                            const QPointF s( curr_time, cpi.pcie_read_data[131064 - j] );
+                            const QPointF s( curr_time, cpi.pcie_read_data[16384 - j] );
                             SignalData::instance().append( s );
                             curr_time = curr_time + TIMESTEP;
                         }
