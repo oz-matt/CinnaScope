@@ -68,7 +68,15 @@ void SamplingThread::sample( double elapsed )
 
             if(cpi.Get_BRAM_Address_Pointer(&address))
             {
-                qDebug("curr_addy: %i", address);
+                if(cpi.updateOscData())
+                {
+                    qDebug("Address: %i, Data: %d", address, cpi.pcie_read_data[address]);
+                }
+                else
+                {
+                    qDebug("FAILED TO GET DATA!!!");
+                }
+
             }
             else
             {
