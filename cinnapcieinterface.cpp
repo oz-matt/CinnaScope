@@ -12,6 +12,16 @@ CinnaPcieInterface::CinnaPcieInterface()
     {
         qDebug("PCIE_Load Failed!");
     }
+
+    this->hPCIE; = PCIE_Open(0,0,0);
+    if (this->hPCIE)
+    {
+        qDebug("PCIE_Load Success!!!");
+    }
+    else
+    {
+        qDebug("PCIE_Load Failed!");
+    }
 }
 
 BOOL CinnaPcieInterface::Get_BRAM_Address_Pointer(DWORD* address)
