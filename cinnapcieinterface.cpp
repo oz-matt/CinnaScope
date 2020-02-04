@@ -14,6 +14,15 @@ CinnaPcieInterface::CinnaPcieInterface()
     }
 }
 
+BOOL CinnaPcieInterface::Get_BRAM_Address_Pointer(DWORD* address)
+{
+    BOOL bPass = TRUE;
+
+    bPass = PCIE_Read32(this->hPCIE, DEMO_PCIE_USER_BAR, 0x20, address);
+
+    return bPass;
+}
+
 PCIE_HANDLE CinnaPcieInterface::getHandle()
 {
     return this->hPCIE;

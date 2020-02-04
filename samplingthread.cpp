@@ -5,6 +5,9 @@
 #include <qwt_math.h>
 #include <math.h>
 #include <QDebug>
+#include "cinnapcieinterface.h"
+
+extern CinnaPcieInterface cpi;
 
 INCLUDE_DUMMY_DATA;
 
@@ -61,8 +64,16 @@ void SamplingThread::sample( double elapsed )
             SignalData::instance().append( s );
             curr_time = curr_time + TIMESTEP;
 
+            DWORD address = 0;
 
-            //qDebug("curr_time: %f   val: %f", curr_time, val);
+            if(cpi.Get_BRAM_Address_Pointer(&address))
+            {
+                qDebug("curr_addy: %i", address);
+            }
+            else
+            {
+                qDebug("FAILED TO GET ADDRESS!!!");
+            }
         }
     }
 }

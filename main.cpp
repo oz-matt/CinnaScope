@@ -6,16 +6,13 @@
 #include <QApplication>
 #include <QThread>
 
+CinnaPcieInterface cpi;
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     MainWindow w;
     w.resize(800, 400);
-
-    CinnaPcieInterface* cpi = new CinnaPcieInterface();
-
-
 
     w.show();
 
