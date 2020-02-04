@@ -52,6 +52,8 @@ double SamplingThread::amplitude() const
 
 double curr_time = 0;
 
+signed int lastAddress = 0;
+
 void SamplingThread::sample( double elapsed )
 {
     if ( d_frequency > 0.0 )
@@ -59,18 +61,67 @@ void SamplingThread::sample( double elapsed )
         int i;
         for(i=0;i<DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL;i++){
 
-            double val = value(0);
-            const QPointF s( curr_time, val );
-            SignalData::instance().append( s );
-            curr_time = curr_time + TIMESTEP;
-
-            DWORD address = 0;
+            signed int address = 0;
 
             if(cpi.Get_BRAM_Address_Pointer(&address))
             {
                 if(cpi.updateOscData())
                 {
-                    qDebug("Address: %i, Data: %d", address, cpi.pcie_read_data[address]);
+                    bool wrap = false;
+                    int wrap_spacing = 0;
+
+                    //qDebug("Address: %i, Data: %d", address, cpi.pcie_read_data[address]);
+                    int numNewPoints = 0;
+
+                    if((address - lastAddress) < 0)
+                    {
+                        wrap = true;
+                        wrap_spacing = 131064 - lastAddress;
+                        numNewPoints = wrap_spacing + address + 1;
+                    }
+                    else
+                    {
+                        numNewPoints = address - lastAddress;
+                    }
+
+                    //qDebug("Num Points To Update: %d, wrap: %b", numNewPoints, wrap);
+                    lastAddress = address;
+
+                    if (wrap)
+                    {
+                        int j, k;
+                        for(j=(wrap_spacing-1);j>=0;j--)
+                        {
+                            const QPointF s( curr_time, cpi.pcie_read_data[131064 - j] );
+                            SignalData::instance().append( s );
+                            curr_time = curr_time + TIMESTEP;
+                        }
+                        for(k=address;k>=0;k--)
+                        {
+                            const QPointF s( curr_time, cpi.pcie_read_data[address - k] );
+                            SignalData::instance().append( s );
+                            curr_time = curr_time + TIMESTEP;
+                        }
+                    }
+                    else
+                    {
+                        qDebug("\r\nSample START:\r\n\r\n");
+                        qDebug("Num Points To Update: %d", numNewPoints);
+
+                        int j;
+                        for(j=(numNewPoints-1);j>=0;j--)
+                        {
+                            const QPointF s( curr_time, cpi.pcie_read_data[address - j] );
+                            SignalData::instance().append( s );
+                            curr_time = curr_time + TIMESTEP;
+                            qDebug("Address: %d, Data: %d", address - j, cpi.pcie_read_data[address - j]);
+                        }
+
+                        qDebug("\r\nEarlier:");
+                        qDebug("Address: %d, Data: %d", address - j - 1, cpi.pcie_read_data[address - j - 1]);
+                        qDebug("Address: %d, Data: %d", address - j - 2, cpi.pcie_read_data[address - j - 2]);
+                        qDebug("Address: %d, Data: %d", address - j - 3, cpi.pcie_read_data[address - j - 3]);
+                    }
                 }
                 else
                 {
