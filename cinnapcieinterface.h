@@ -20,7 +20,7 @@ public:
     void* getLibHandle();
 
     bool pcieSuccess;
-    QVector<quint64>* pcie_read_data;
+    quint64* pcie_read_data;
 
 private:
 

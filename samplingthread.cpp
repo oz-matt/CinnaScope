@@ -92,13 +92,13 @@ void SamplingThread::sample( double elapsed )
                         int j, k;
                         for(j=(wrap_spacing-1);j>=0;j--)
                         {
-                            const QPointF s( curr_time, cpi.pcie_read_data->at(16384 - j) );
+                            const QPointF s( curr_time, cpi.pcie_read_data[16384 - j]);
                             SignalData::instance().append( s );
                             curr_time = curr_time + TIMESTEP;
                         }
                         for(k=address;k>=0;k--)
                         {
-                            const QPointF s( curr_time, cpi.pcie_read_data->at(address - k) );
+                            const QPointF s( curr_time, cpi.pcie_read_data[address - k]);
                             SignalData::instance().append( s );
                             curr_time = curr_time + TIMESTEP;
                         }
@@ -111,16 +111,16 @@ void SamplingThread::sample( double elapsed )
                         int j;
                         for(j=(numNewPoints-1);j>=0;j--)
                         {
-                            const QPointF s( curr_time, cpi.pcie_read_data->at(address - j));
+                            const QPointF s( curr_time, cpi.pcie_read_data[address - j]);
                             SignalData::instance().append( s );
                             curr_time = curr_time + TIMESTEP;
-                            qDebug("Address: %d, Data: %llX", address - j, cpi.pcie_read_data->at(address - j));
+                            qDebug("Address: %d, Data: %llX", address - j, cpi.pcie_read_data[address - j]);
                         }
 
                         qDebug("\r\nEarlier:");
-                        qDebug("Address: %d, Data: %llX", address - j - 2, cpi.pcie_read_data->at(address - j - 2));
-                        qDebug("Address: %d, Data: %llX", address - j - 3, cpi.pcie_read_data->at(address - j - 3));
-                        qDebug("Address: %d, Data: %llX", address - j - 4, cpi.pcie_read_data->at(address - j - 4));
+                        qDebug("Address: %d, Data: %llX", address - j - 2, cpi.pcie_read_data[address - j - 2]);
+                        qDebug("Address: %d, Data: %llX", address - j - 3, cpi.pcie_read_data[address - j - 3]);
+                        qDebug("Address: %d, Data: %llX", address - j - 4, cpi.pcie_read_data[address - j - 4]);
                     }
                 }
                 else
