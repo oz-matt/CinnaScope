@@ -3,9 +3,10 @@
 
 #include "pcie_lib/PCIE.h"
 #include <QtGlobal>
+#include <QVector>
 
 #define DEMO_PCIE_USER_BAR			PCIE_BAR0
-#define MEM_SIZE			16384//(128*1024) //128KB
+#define MEM_SIZE			(128*1024) //128KB
 
 class CinnaPcieInterface
 {
@@ -18,7 +19,8 @@ public:
     PCIE_HANDLE getHandle();
     void* getLibHandle();
 
-    quint64 pcie_read_data[MEM_SIZE];
+    bool pcieSuccess;
+    QVector<quint64> pcie_read_data;
 
 private:
 

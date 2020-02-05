@@ -3,20 +3,24 @@
 
 CinnaPcieInterface::CinnaPcieInterface()
 {
+
+    this->pcieSuccess = false;
+
     this->lib_handle = PCIE_Load();
     if (this->lib_handle)
     {
         qDebug("PCIE_Load Success!!!");
-    }
-    else
-    {
-        qDebug("PCIE_Load Failed!");
-    }
-
-    this->hPCIE = PCIE_Open(0,0,0);
-    if (this->hPCIE)
-    {
-        qDebug("PCIE_Load Success!!!");
+        this->hPCIE = PCIE_Open(0,0,0);
+        if (this->hPCIE)
+        {
+            qDebug("PCIE_Load Success!!!");
+            this->pcie_read_data.reserve(16384);
+            this->pcieSuccess = true;
+        }
+        else
+        {
+            qDebug("PCIE_Load Failed!");
+        }
     }
     else
     {
@@ -37,7 +41,7 @@ BOOL CinnaPcieInterface::updateOscData()
 {
     BOOL bPass = TRUE;
 
-    bPass = PCIE_DmaRead(this->hPCIE, 0x20000, this->pcie_read_data, MEM_SIZE);
+    bPass = PCIE_DmaRead(this->hPCIE, 0x20000, &(this->pcie_read_data), MEM_SIZE);
 
     return bPass;
 }
