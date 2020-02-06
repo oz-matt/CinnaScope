@@ -58,8 +58,6 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
             this, SIGNAL( StartMouseDragListen(QMouseEvent*) ) );
     connect( d_knob, SIGNAL( mouseMoveEvent(QMouseEvent*) ),
             this, SIGNAL( ContinueMouseDragListen(QMouseEvent*) ) );
-    connect( d_knob, SIGNAL( mouseReleaseEvent(QMouseEvent*) ),
-            this, SIGNAL( StopMouseDragListen(QMouseEvent*) ) );
 
 }
 

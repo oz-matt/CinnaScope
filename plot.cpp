@@ -93,10 +93,6 @@ Plot::Plot( QWidget *parent ):
     setAxisScale( QwtPlot::xBottom, d_interval.minValue(), d_interval.maxValue() );
     setAxisScale( QwtPlot::yLeft, -2.0, 2.0 );
 
-
-
-
-
     d_origin = new QwtPlotMarker();
     //d_origin->setLineStyle( QwtPlotMarker::Cross );
     d_origin->setValue( d_interval.minValue() + d_interval.width() / 2.0, 0.0 );
@@ -112,6 +108,7 @@ Plot::Plot( QWidget *parent ):
     d_curve->attach( this );
 
     QwtPlot::enableAxis(QwtPlot::xBottom, false);
+    QwtPlot::enableAxis(QwtPlot::yLeft, false);
     //QwtPlot::setAxisMaxMinor(QwtPlot::xBottom, 16);
     QwtPlot::setAxisMaxMajor(QwtPlot::xBottom, 16);
 

@@ -21,7 +21,8 @@ public:
 
     void incrementTimePerDiv();
     void decrementTimePerDiv();
-
+    void incrementVPerDiv();
+    void decrementVPerDiv();
 
 Q_SIGNALS:
     void amplitudeChanged( double );
@@ -30,17 +31,23 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void updateTimePerDivTextFromScroll(QWheelEvent *event);
-
     void StartMouseDragListen(QMouseEvent *event);
     void ContinueMouseDragListen(QMouseEvent *event);
-    void StopMouseDragListen(QMouseEvent *event);
+
+    void updateTimePerDivTextFromScroll_vpd(QWheelEvent *event);
+    void StartMouseDragListen_vpd(QMouseEvent *event);
+    void ContinueMouseDragListen_vpd(QMouseEvent *event);
+
 private:
-    Knob *d_frequencyKnob;
-    Knob *d_amplitudeKnob;
+    Knob *d_vperdivKnob;
+    Knob *d_timeperdivKnob;
     WheelBox *d_timerWheel;
     WheelBox *d_intervalWheel;
 
     Plot *d_plot;
     QTimer *timer;
-    QLabel* le;
+
+    QLabel* tpd_label;
+    QLabel* vpd_label;
+
 };
