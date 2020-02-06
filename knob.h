@@ -3,7 +3,7 @@
 
 #include <qwidget.h>
 
-class QwtKnob;
+class CinnaFixedKnob;
 class QLabel;
 
 class Knob: public QWidget
@@ -16,6 +16,7 @@ public:
     Knob( const QString &title,
         double min, double max, QWidget *parent = NULL );
 
+
     virtual QSize sizeHint() const;
 
     void setValue( double value );
@@ -25,13 +26,16 @@ public:
     QColor theme() const;
 
 Q_SIGNALS:
-    double valueChanged( double );
+
+    void wheelEvent(QWheelEvent *event);
+    void StartMouseDragListen(QMouseEvent *event);
+    void ContinueMouseDragListen(QMouseEvent *event);
 
 protected:
     virtual void resizeEvent( QResizeEvent * );
 
 private:
-    QwtKnob *d_knob;
+    CinnaFixedKnob *d_knob;
     QLabel *d_label;
 };
 

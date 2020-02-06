@@ -6,13 +6,20 @@
 #include <qwt_scale_engine.h>
 #include <qlabel.h>
 #include <qevent.h>
+#include <QDebug>
+#include <cinnafixedknob.h>
+#include "cinnastate.h"
+#include "oscwidget.h"
+
+extern CinnaState cstate;
+extern double posknob;
 
 Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
     QWidget( parent )
 {
     QFont font( "Helvetica", 10 );
 
-    d_knob = new QwtKnob( this );
+    d_knob = new CinnaFixedKnob( this );
     d_knob->setFont( font );
 
     QwtScaleDiv scaleDiv =
@@ -27,7 +34,7 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
             ticks.append( max );
     }
     scaleDiv.setTicks( QwtScaleDiv::MajorTick, ticks );
-    d_knob->setScale( scaleDiv );
+    //d_knob->setScale( scaleDiv );
 
     d_knob->setKnobWidth( 50 );
 
@@ -36,12 +43,47 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
     d_label->setFont( font );
     d_label->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
 
+    d_knob->setKnobStyle(QwtKnob::Styled);
+
     setSizePolicy( QSizePolicy::MinimumExpanding,
         QSizePolicy::MinimumExpanding );
 
-    connect( d_knob, SIGNAL( valueChanged( double ) ),
-        this, SIGNAL( valueChanged( double ) ) );
+    //connect( d_knob, SIGNAL( valueChanged( double ) ),
+    //    this, SIGNAL( valueChanged( double ) ) );
+
+    //connect( d_knob, SIGNAL( wheelEvent(QWheelEvent *event) ),
+    //    this, SLOT( updateTimePerDivText(QWheelEvent *event) ) );
+
+    connect( d_knob, SIGNAL( mousePressEvent(QMouseEvent*) ),
+            this, SIGNAL( StartMouseDragListen(QMouseEvent*) ) );
+    connect( d_knob, SIGNAL( mouseMoveEvent(QMouseEvent*) ),
+            this, SIGNAL( ContinueMouseDragListen(QMouseEvent*) ) );
+
 }
+
+/*void Knob::wheelEvent(QWheelEvent *event)
+{
+    QPoint numDegrees = event->angleDelta() / 8;
+
+    qDebug("y: %d", numDegrees.y());
+
+    if (numDegrees.y()  > 0)
+    {
+        posknob += 2;
+        d_knob->setValue(posknob);
+        if (posknob >= 20) posknob = 2;
+        cstate.incrementTimePerDiv();
+    }
+    else
+    {
+        posknob -= 2;
+        d_knob->setValue(posknob);
+        if (posknob < 2) posknob = 20;
+        cstate.decrementTimePerDiv();
+    }
+
+}*/
+
 
 QSize Knob::sizeHint() const
 {

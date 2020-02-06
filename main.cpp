@@ -5,6 +5,7 @@
 #include "cinnapcieinterface.h"
 #include <QApplication>
 #include <QThread>
+#include "cinna.h"
 
 CinnaPcieInterface cpi;
 

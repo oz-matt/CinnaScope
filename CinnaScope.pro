@@ -34,6 +34,9 @@ SOURCES += \
     curvedata.cpp \
     signaldata.cpp \
     samplingthread.cpp \
+    cinnafixedknob.cpp \
+    cinnaroundscaledraw.cpp \
+    cinnastate.cpp \
     knob.cpp \
     wheelbox.cpp \
     oscwidget.cpp \
@@ -42,6 +45,9 @@ SOURCES += \
 HEADERS += \
     dummydata.h \
     mainwindow.h \
+    cinnafixedknob.h \
+    cinnaroundscaledraw.h \
+    cinnastate.h \
     plot.h \
     curvedata.h \
     signaldata.h \
@@ -49,6 +55,8 @@ HEADERS += \
     knob.h \
     wheelbox.h \
     oscwidget.h \
+    cinnastyle.h \
+    cinna.h \
     cinnapcieinterface.h
 
     full {
@@ -65,7 +73,7 @@ HEADERS += \
         QMAKE_LFLAGS += -I/home/matt/CinnaScope/pcie_lib/terasic_pcie_qsys.so -ldl
 
         #LIBS += /home/matt/CinnaScope/pcie_lib/terasic_pcie_qsys.so
-    }
+    }Z
 
 FORMS += \
         mainwindow.ui

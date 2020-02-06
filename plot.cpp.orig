@@ -92,11 +92,24 @@ Plot::Plot( QWidget *parent ):
     //setAxisTitle( QwtPlot::xBottom, "Time [s]" );
     setAxisScale( QwtPlot::xBottom, d_interval.minValue(), d_interval.maxValue() );
     setAxisScale( QwtPlot::yLeft, -2.0, 2.0 );
+<<<<<<< HEAD
+
+    QwtPlot::enableAxis(QwtPlot::xBottom, false);
+=======
+>>>>>>> 5603458e550da981f8bcf7556633acc32040f8b5
+
+    QwtPlotGrid *grid = new QwtPlotGrid();
+    grid->setPen( Qt::gray, 0.0, Qt::DotLine );
+    grid->enableX( true );
+    grid->enableXMin( true );
+    grid->enableY( true );
+    grid->enableYMin( false );
+    grid->attach( this );
 
     d_origin = new QwtPlotMarker();
-    //d_origin->setLineStyle( QwtPlotMarker::Cross );
+    d_origin->setLineStyle( QwtPlotMarker::Cross );
     d_origin->setValue( d_interval.minValue() + d_interval.width() / 2.0, 0.0 );
-    //d_origin->setLinePen( Qt::gray, 0.0, Qt::DashLine );
+    d_origin->setLinePen( Qt::gray, 0.0, Qt::DashLine );
     d_origin->attach( this );
 
     d_curve = new QwtPlotCurve();
@@ -106,20 +119,6 @@ Plot::Plot( QWidget *parent ):
     d_curve->setPaintAttribute( QwtPlotCurve::ClipPolygons, false );
     d_curve->setData( new CurveData() );
     d_curve->attach( this );
-
-    QwtPlot::enableAxis(QwtPlot::xBottom, false);
-    QwtPlot::enableAxis(QwtPlot::yLeft, false);
-    //QwtPlot::setAxisMaxMinor(QwtPlot::xBottom, 16);
-    QwtPlot::setAxisMaxMajor(QwtPlot::xBottom, 16);
-
-    QwtPlotGrid *grid = new QwtPlotGrid();
-    grid->setPen( Qt::gray, 0.0, Qt::DotLine );
-    grid->enableX( true );
-    grid->enableXMin( false );
-    grid->enableY( true );
-    grid->enableYMin( false );
-    grid->attach( this );
-
 }
 
 Plot::~Plot()
@@ -149,31 +148,10 @@ void Plot::setIntervalLength( double interval )
     if ( interval > 0.0 && interval != d_interval.width() )
     {
         d_interval.setMaxValue( d_interval.minValue() + interval );
-        //setAxisScale( QwtPlot::xBottom,
-        //    d_interval.minValue(), d_interval.maxValue() );
+        setAxisScale( QwtPlot::xBottom,
+            d_interval.minValue(), d_interval.maxValue() );
 
-        QwtScaleDiv div(d_interval.minValue(), d_interval.maxValue());
-
-        double inc = ((d_interval.maxValue() - d_interval.minValue()) / 10.0);
-
-                //QList<double> majorTicks;
-                //majorTicks << 0 << 75 << 150;
-
-                QList<double> majorTicks;
-                //mediumTicks << 15 << 30 << 45 << 60 << 90 << 105 << 120 << 135;
-
-                int i;
-                for(i=0;i<10;i++)
-                {
-                    majorTicks << d_interval.minValue() + (i * inc);
-                }
-
-                //div.setTicks(QwtScaleDiv::MajorTick, majorTicks);
-                div.setTicks(QwtScaleDiv::MajorTick, majorTicks);
-
-                setAxisScaleDiv(QwtPlot::xBottom, div);
-
-                replot();
+        replot();
     }
 }
 
@@ -240,8 +218,6 @@ void Plot::incrementInterval()
             ticks[j] += d_interval.width();
         scaleDiv.setTicks( i, ticks );
     }
-
-
     setAxisScaleDiv( QwtPlot::xBottom, scaleDiv );
 
     d_origin->setValue( d_interval.minValue() + d_interval.width() / 2.0, 0.0 );
@@ -252,30 +228,39 @@ void Plot::incrementInterval()
 
 extern double curr_time;
 
-void print_bram_address_ptr(void)
-{
-    //if (PCIE_DmaRead(hPCIe, LocalAddr, pRead, nTestSize)
-}
-
 void Plot::timerEvent( QTimerEvent *event )
 {
     if ( event->timerId() == d_timerId )
     {
         updateCurve();
 
+<<<<<<< HEAD
+        //const double elapsed = d_clock.elapsed() / 1000.0;
         if ( curr_time > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
-        {
-            incrementInterval();
-            qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
-        }
+                    incrementInterval();
+        qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
+=======
+        const double elapsed = d_clock.elapsed() / 1000.0;
+        if ( curr_time > (d_interval.maxValue() + (d_interval.maxValue() - d_interval.minValue())) )
+                    incrementInterval();
+        //qDebug("Maxval: %f      Minval: %f", d_interval.maxValue(), d_interval.minValue());
+>>>>>>> 5603458e550da981f8bcf7556633acc32040f8b5
+
         return;
         /*double maxval = d_interval.maxValue();
         double minval = d_interval.minValue();
+<<<<<<< HEAD
 
         if ( elapsed > (maxval + (maxval - minval)) )
             qDebug("Maxval: %f      Minval: %f", maxval, minval);
             incrementInterval();
-*/
+
+=======
+        if ( elapsed > (maxval + (maxval - minval)) )
+            qDebug("Maxval: %f      Minval: %f", maxval, minval);
+            incrementInterval();
+>>>>>>> 5603458e550da981f8bcf7556633acc32040f8b5
+        return;*/
 
     }
 
