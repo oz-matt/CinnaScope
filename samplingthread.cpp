@@ -111,10 +111,13 @@ void SamplingThread::sample( double elapsed )
                         int j;
                         for(j=(numNewPoints-1);j>=0;j--)
                         {
-                            const QPointF s( curr_time, cpi.pcie_read_data[address - j]);
+                            DWORD y = (cpi.pcie_read_data[address - j]) >> 48;
+                            double yvolts = (y - 8192) * 0.01220703125;
+
+                            const QPointF s( curr_time, yvolts);
                             SignalData::instance().append( s );
-                            curr_time = curr_time + TIMESTEP;
-                            qDebug("Address: %d, Data: %llX", address - j, cpi.pcie_read_data[address - j]);
+                            curr_time += TIMESTEP;
+                            qDebug("Address: %d, Data: %hd, Volts: %f", address, y, yvolts);
                         }
 
                         qDebug("\r\nEarlier:");

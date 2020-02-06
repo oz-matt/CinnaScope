@@ -16,7 +16,7 @@ CinnaPcieInterface::CinnaPcieInterface()
         if (this->hPCIE)
         {
             qDebug("PCIE_Load Success!!!");
-            this->pcie_read_data = (quint64*)malloc(16384 * sizeof(quint64*));
+            this->pcie_read_data = new quint64[16384];
             this->pcieSuccess = true;
         }
         else
