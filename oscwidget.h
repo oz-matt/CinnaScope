@@ -1,6 +1,7 @@
 #include <qwidget.h>
 #include <qtimer.h>
 #include <qlabel.h>
+#include "triggerline.h"
 
 class Plot;
 class Knob;
@@ -50,4 +51,5 @@ private:
     QLabel* tpd_label;
     QLabel* vpd_label;
 
+    TriggerLine *xline;
 };

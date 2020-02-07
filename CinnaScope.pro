@@ -40,7 +40,10 @@ SOURCES += \
     knob.cpp \
     wheelbox.cpp \
     oscwidget.cpp \
-    cinnapcieinterface.cpp
+    cinnapcieinterface.cpp \
+    cinnafixedknob.cpp \
+    cinnaroundscaledraw.cpp \
+    triggerline.cpp\
 
 HEADERS += \
     dummydata.h \
@@ -57,7 +60,9 @@ HEADERS += \
     oscwidget.h \
     cinnastyle.h \
     cinna.h \
-    cinnapcieinterface.h
+    cinnapcieinterface.h \
+    cinna.h \
+    triggerline.h
 
     full {
         SOURCES += \
@@ -73,7 +78,7 @@ HEADERS += \
         QMAKE_LFLAGS += -I/home/matt/CinnaScope/pcie_lib/terasic_pcie_qsys.so -ldl
 
         #LIBS += /home/matt/CinnaScope/pcie_lib/terasic_pcie_qsys.so
-    }Z
+    }
 
 FORMS += \
         mainwindow.ui
