@@ -103,6 +103,7 @@ OscWidget::OscWidget( QWidget *parent ):
 
     //connect( d_intervalWheel, SIGNAL( valueChanged( double ) ),
         //d_plot, SLOT( setIntervalLength( double ) ) );
+
 }
 
 void OscWidget::start()

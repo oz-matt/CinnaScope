@@ -112,7 +112,7 @@ void SamplingThread::sample( double elapsed )
                         for(j=(numNewPoints-1);j>=0;j--)
                         {
                             DWORD y = (cpi.pcie_read_data[address - j]) >> 48;
-                            double yvolts = (y - 8192) * 0.01220703125;
+                            double yvolts = (y - 8192) * (double)0.01220703125;
 
                             const QPointF s( curr_time, yvolts);
                             SignalData::instance().append( s );

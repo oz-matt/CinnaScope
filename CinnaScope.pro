@@ -80,5 +80,7 @@ HEADERS += \
         #LIBS += /home/matt/CinnaScope/pcie_lib/terasic_pcie_qsys.so
     }
 
+
 FORMS += \
         mainwindow.ui
+
