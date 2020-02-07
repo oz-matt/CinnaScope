@@ -11,6 +11,9 @@
 #include "cinnafixedknob.h"
 #include "cinnastate.h"
 #include <qevent.h>
+#include <qwt_point_data.h>
+#include <qwt_plot_curve.h>
+#include "triggerline.h"
 
 extern CinnaState cstate;
 
@@ -32,6 +35,15 @@ OscWidget::OscWidget( QWidget *parent ):
 
     d_vperdivKnob = new Knob( "V/div", 0, 10, this );
     d_vperdivKnob->setValue( 5 );
+
+    xline = new TriggerLine();
+
+    double x[3] ={1.0, 0.0, 1.0};
+        double y[3] ={1.0,0,0};
+
+        xline->setData(new QwtCPointerData(x,y,3));
+        xline->setPen(QPen(QColor(Qt::white),1,Qt::SolidLine));
+        //xline->attach(d_plot);
 
     //d_intervalWheel = new WheelBox( "Displayed [s]", 0.1, 1.0, 0.01, this );
     //d_intervalWheel->setValue( 1.0 );
@@ -69,7 +81,6 @@ OscWidget::OscWidget( QWidget *parent ):
 
     //connect( d_amplitudeKnob, SIGNAL( valueChanged( double ) ),
         //SIGNAL( amplitudeChanged( double ) ) );
-
 
     connect( d_timeperdivKnob, SIGNAL( wheelEvent(QWheelEvent*) ),
             this, SLOT( updateTimePerDivTextFromScroll(QWheelEvent*) ) );
@@ -139,12 +150,17 @@ void OscWidget::decrementTimePerDiv()
 }
 void OscWidget::incrementVPerDiv()
 {
+
     posVknob += 1;
     if (posVknob >= 10) posVknob = 0;
     d_vperdivKnob->setValue(posVknob);
     cstate.incrementVPerDiv();
     d_plot->setAxisScale(QwtPlot::yLeft, cstate.getVPerDivNum() * -4.0, cstate.getVPerDivNum() * 4.0);
     vpd_label->setText(cstate.getVPerDivString());
+
+xline->attach(d_plot);
+
+    d_plot->replot();
 }
 
 void OscWidget::decrementVPerDiv()
@@ -155,6 +171,8 @@ void OscWidget::decrementVPerDiv()
     cstate.decrementVPerDiv();
     d_plot->setAxisScale(QwtPlot::yLeft, cstate.getVPerDivNum() * -4.0, cstate.getVPerDivNum() * 4.0);
     vpd_label->setText(cstate.getVPerDivString());
+    xline->detach();
+    d_plot->replot();
 }
 
 void OscWidget::updateTimePerDivTextFromScroll(QWheelEvent *event)

@@ -36,7 +36,8 @@ SOURCES += \
     oscwidget.cpp \
     cinnafixedknob.cpp \
     cinnaroundscaledraw.cpp \
-    cinnastate.cpp
+    cinnastate.cpp \
+    triggerline.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -52,7 +53,8 @@ HEADERS += \
     cinnaroundscaledraw.h \
     cinnastyle.h \
     cinnastate.h \
-    cinna.h
+    cinna.h \
+    triggerline.h
 
 FORMS += \
         mainwindow.ui
