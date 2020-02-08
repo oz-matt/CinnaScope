@@ -14,6 +14,9 @@
 #include <qwt_point_data.h>
 #include <qwt_plot_curve.h>
 #include "triggerline.h"
+#include <QApplication>
+#include <QGroupBox>
+
 
 extern CinnaState cstate;
 
@@ -25,26 +28,34 @@ OscWidget::OscWidget( QWidget *parent ):
     d_plot = new Plot( this );
     d_plot->setIntervalLength( 0.5 );
 
+    this->setMouseTracking(true);
+
     timer = new QTimer(this);
     timer->setInterval(10);
     connect(timer, &QTimer::timeout, d_plot, &Plot::updateMe);
 
-    d_timeperdivKnob = new Knob( "Time/div", 0, 10, this );
+    d_timeperdivKnob = new Knob( "Time/div", 0, 10);
     d_timeperdivKnob->setValue( 5 );
-
-
-    d_vperdivKnob = new Knob( "V/div", 0, 10, this );
+ QGroupBox *groupBox = new QGroupBox(tr("Vertical"));
+QHBoxLayout *vert_layout = new QHBoxLayout(  );
+    d_vperdivKnob = new Knob( "V/div", 0, 10);
     d_vperdivKnob->setValue( 5 );
+    d_vperdivKnob2 = new Knob( "V/div", 0, 10);
+    d_vperdivKnob2->setValue( 5 );
 
-    xline = new TriggerLine();
+    xline = new QwtPlotCurve();
 
     double x[3] ={1.0, 0.0, 1.0};
         double y[3] ={1.0,0,0};
 
         xline->setData(new QwtCPointerData(x,y,3));
         xline->setPen(QPen(QColor(Qt::white),1,Qt::SolidLine));
-        //xline->attach(d_plot);
+        xline->attach(d_plot);
 
+        led = new QLed(  );
+
+        led->setOffColor(QLed::ledColor::Blue);
+        led->setShape(QLed::ledShape::Rounded);
     //d_intervalWheel = new WheelBox( "Displayed [s]", 0.1, 1.0, 0.01, this );
     //d_intervalWheel->setValue( 1.0 );
 
@@ -56,7 +67,11 @@ OscWidget::OscWidget( QWidget *parent ):
     //vLayout1->addWidget( d_timerWheel );
     //vLayout1->addStretch( 10 );
     vLayout1->addWidget( d_timeperdivKnob );
-    vLayout1->addWidget( d_vperdivKnob );
+    vert_layout->addWidget( d_vperdivKnob );
+    vert_layout->addWidget( d_vperdivKnob2 );
+    vert_layout->addWidget( led );
+    groupBox->setLayout(vert_layout);
+    vLayout1->addWidget( groupBox );
 
     tpd_label = new QLabel(cstate.getTimePerDivString());
     vpd_label = new QLabel(cstate.getVPerDivString());
@@ -96,6 +111,13 @@ OscWidget::OscWidget( QWidget *parent ):
     connect( d_vperdivKnob, SIGNAL( ContinueMouseDragListen(QMouseEvent*) ),
             this, SLOT( ContinueMouseDragListen_vpd(QMouseEvent*) ) );
 
+    /*connect( xline, SIGNAL( mousePressEvent(QMouseEvent*) ),
+            this, SLOT( StartMouseDragListen_tl(QMouseEvent*) ) );
+    connect( xline, SIGNAL( mouseMoveEvent(QMouseEvent*) ),
+            this, SLOT( ContinueMouseDragListen_tl(QMouseEvent*) ) );
+    connect( xline, SIGNAL( mouseReleaseEvent(QMouseEvent*) ),
+            this, SLOT( StopMouseDragListen_tl(QMouseEvent*) ) );
+*/
     //connect( d_frequencyKnob, SIGNAL( valueChanged( double ) ),
         //SIGNAL( frequencyChanged( double ) ) );
     //connect( d_timerWheel, SIGNAL( valueChanged( double ) ),
@@ -158,7 +180,7 @@ void OscWidget::incrementVPerDiv()
     d_plot->setAxisScale(QwtPlot::yLeft, cstate.getVPerDivNum() * -4.0, cstate.getVPerDivNum() * 4.0);
     vpd_label->setText(cstate.getVPerDivString());
 
-xline->attach(d_plot);
+    xline->attach(d_plot);
 
     d_plot->replot();
 }
@@ -247,3 +269,33 @@ void OscWidget::ContinueMouseDragListen_vpd(QMouseEvent *event)
         mposv = event->y();
     }
 }
+
+void OscWidget::StartMouseDragListen_tl(QMouseEvent *event)
+{
+    this->setCursor(Qt::SplitVCursor);
+}
+
+void OscWidget::ContinueMouseDragListen_tl(QMouseEvent *event)
+{
+
+}
+
+void OscWidget::StopMouseDragListen_tl(QMouseEvent *event)
+{
+    this->setCursor(Qt::ArrowCursor);
+}
+
+extern bool unsetOnce;
+extern bool setOnce;
+
+void OscWidget::mouseMoveEvent(QMouseEvent* event)
+{
+    if (unsetOnce)
+    {
+        qApp->restoreOverrideCursor();
+        unsetOnce = false;
+        setOnce = true;
+    }
+}
+
+
