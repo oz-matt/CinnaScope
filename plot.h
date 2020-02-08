@@ -19,6 +19,8 @@ public:
 
     virtual bool eventFilter( QObject *, QEvent * );
 
+    void mouseMoveEvent( QMouseEvent * event);
+
 public Q_SLOTS:
     void setIntervalLength( double );
     void updateMe();

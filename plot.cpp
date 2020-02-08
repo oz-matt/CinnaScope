@@ -11,6 +11,7 @@
 #include <qwt_painter.h>
 #include <qevent.h>
 #include<QDebug>
+#include <QApplication>
 
 class Canvas: public QwtPlotCanvas
 {
@@ -85,7 +86,10 @@ Plot::Plot( QWidget *parent ):
     d_directPainter = new QwtPlotDirectPainter();
 
     setAutoReplot( false );
-    setCanvas( new Canvas() );
+
+    Canvas* canv = new Canvas();
+    canv->setMouseTracking(true);
+    setCanvas(canv);
 
     plotLayout()->setAlignCanvasToScales( true );
 
@@ -119,7 +123,7 @@ Plot::Plot( QWidget *parent ):
     grid->enableY( true );
     grid->enableYMin( false );
     grid->attach( this );
-
+this->setMouseTracking(true);
 }
 
 Plot::~Plot()
@@ -302,4 +306,38 @@ bool Plot::eventFilter( QObject *object, QEvent *event )
     }
 
     return QwtPlot::eventFilter( object, event );
+}
+
+bool unsetOnce = false;
+bool setOnce = true;
+
+void Plot::mouseMoveEvent( QMouseEvent * event)
+{
+
+    double centerHeight = this->frameRect().height() / 2.0;
+
+    double lowerBound = centerHeight - 3;
+    double upperBound = centerHeight + 3;
+
+    if((event->y() <= upperBound) && (event->y() >= lowerBound))
+    {
+        if (setOnce)
+        {
+            qDebug("y: %d, ysize: %d", event->y(), this->frameRect().height());
+            //this->unsetCursor();
+            //this->setCursor(Qt::SplitVCursor);
+            qApp->setOverrideCursor(Qt::SplitVCursor);
+            unsetOnce = true;
+            setOnce = false;
+        }
+    }
+    else
+    {
+        if (unsetOnce)
+        {
+            qApp->restoreOverrideCursor();
+            unsetOnce = false;
+            setOnce = true;
+        }
+    }
 }
