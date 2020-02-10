@@ -23,6 +23,8 @@ Knob::Knob( const QString &title, double min, double max, int knobWidth, bool dr
     d_knob->setFont( font );
     //d_knob->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 
+    this->knob_width = knobWidth;
+    this->draw_ticks = drawTicks;
 
     //QwtScaleDiv scaleDiv =
     //    d_knob->scaleEngine()->divideScale( min, max, 5, 3 );
@@ -94,9 +96,6 @@ QSize Knob::sizeHint() const
     const int w = sz1.width();//qMax( sz1.width(), sz2.width() );
     const int h = sz1.height(); //+ sz2.height();
 
-    int off = qCeil( d_knob->scaleDraw()->extent( d_knob->font() ) );
-    off -= 15; // spacing
-
     return QSize( w, h );
 }
 
@@ -131,7 +130,9 @@ void Knob::resizeEvent( QResizeEvent *event )
     const int knobHeight = d_knob->sizeHint().height();
 
     int off = qCeil( d_knob->scaleDraw()->extent( d_knob->font() ) );
-    off -= 15; // spacing
+    off -= 15 + (50 - this->knob_width); // spacing
+
+    if (!this->draw_ticks) off -= 10;
 
     d_knob->setGeometry( 0, sz.height() - knobHeight + off,
         sz.width(), knobHeight );

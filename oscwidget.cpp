@@ -61,11 +61,9 @@ QHBoxLayout *vert_layout = new QHBoxLayout(  );
         led->setOffColor(QLed::ledColor::Blue);
         led->setShape(QLed::ledShape::Rounded);
         led->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-    //d_intervalWheel = new WheelBox( "Displayed [s]", 0.1, 1.0, 0.01, this );
-    //d_intervalWheel->setValue( 1.0 );
 
-    //d_timerWheel = new WheelBox( "Sample Interval [ms]", 0.0, 20.0, 0.1, this );
-    //d_timerWheel->setValue( 10.0 );
+        d_ch1offsetknob->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+        d_ch1offsetknob->resize(80,80);
 
         QLabel* vert_label1 = new QLabel("Scale");
         QLabel* vert_label2 = new QLabel("Trig");
@@ -88,6 +86,7 @@ QHBoxLayout *vert_layout = new QHBoxLayout(  );
     vCh1Knobs->addWidget( led , 1);
     vCh1Knobs->addWidget( d_ch1offsetknob , 1);
 
+    vCh1Knobs->setAlignment(led, Qt::AlignHCenter);
 
     vert_layout->addLayout( vCh1Knobs , 1);
     vert_layout->addLayout( vLayout3 , 1);

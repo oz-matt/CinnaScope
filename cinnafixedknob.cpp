@@ -29,4 +29,3 @@ double CinnaFixedKnob::scrolledTo( const QPoint &pos ) const
 {
 
 }
-

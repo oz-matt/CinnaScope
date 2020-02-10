@@ -14,6 +14,7 @@ public:
     CinnaFixedKnob(QWidget* parent = NULL , bool drawTicks = true);
     virtual ~CinnaFixedKnob();
 
+
 Q_SIGNALS:
     void mouseMoveEvent( QMouseEvent * event);
     void mousePressEvent( QMouseEvent * event);

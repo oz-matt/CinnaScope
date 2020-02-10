@@ -36,6 +36,10 @@ protected:
 
 private:
     CinnaFixedKnob *d_knob;
+
+    int knob_width;
+    bool draw_ticks;
+
     //QLabel *d_label;
 };
 

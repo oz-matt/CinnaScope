@@ -122,12 +122,12 @@ void QLed::toggleValue() {
   return;
 }
 
-/*QSize QLed::sizeHint()
+QSize QLed::sizeHint()
 {
-    return (QSize(20, 10));
+    return (QSize(40, 30));
 }
 
 QSize QLed::minimumSizeHint()
 {
-    return (QSize(20, 10));
-}*/
+    return (QSize(40, 30));
+}
