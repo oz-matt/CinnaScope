@@ -77,6 +77,9 @@ class MY_PLUGIN_EXPORT QLed : public QWidget {
   QStringList shapes;
   QStringList colors;
   void paintEvent(QPaintEvent* event);
+  //QSize sizeHint();
+  //QSize minimumSizeHint();
+
  private:
   QSvgRenderer* renderer ;
 };

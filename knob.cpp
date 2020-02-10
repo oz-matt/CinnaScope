@@ -14,39 +14,41 @@
 extern CinnaState cstate;
 extern double posknob;
 
-Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
+Knob::Knob( const QString &title, double min, double max, int knobWidth, bool drawTicks, QWidget *parent ):
     QWidget( parent )
 {
     QFont font( "Helvetica", 10 );
 
-    d_knob = new CinnaFixedKnob( this );
+    d_knob = new CinnaFixedKnob( this, drawTicks );
     d_knob->setFont( font );
+    //d_knob->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 
-    QwtScaleDiv scaleDiv =
-        d_knob->scaleEngine()->divideScale( min, max, 5, 3 );
 
-    QList<double> ticks = scaleDiv.ticks( QwtScaleDiv::MajorTick );
+    //QwtScaleDiv scaleDiv =
+    //    d_knob->scaleEngine()->divideScale( min, max, 5, 3 );
+
+    /*QList<double> ticks = scaleDiv.ticks( QwtScaleDiv::MajorTick );
     if ( ticks.size() > 0 && ticks[0] > min )
     {
         if ( ticks.first() > min )
             ticks.prepend( min );
         if ( ticks.last() < max )
             ticks.append( max );
-    }
-    scaleDiv.setTicks( QwtScaleDiv::MajorTick, ticks );
+    }*/
+    //scaleDiv.setTicks( QwtScaleDiv::MajorTick, ticks );
     //d_knob->setScale( scaleDiv );
 
-    d_knob->setKnobWidth( 50 );
+    d_knob->setKnobWidth( knobWidth );
 
     font.setBold( true );
-    d_label = new QLabel( title, this );
-    d_label->setFont( font );
-    d_label->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
+    //d_label = new QLabel( title, this );
+    //d_label->setFont( font );
+    //d_label->setAlignment( Qt::AlignTop | Qt::AlignHCenter );
 
     d_knob->setKnobStyle(QwtKnob::Styled);
-
-    setSizePolicy( QSizePolicy::MinimumExpanding,
-        QSizePolicy::MinimumExpanding );
+d_knob->setMarkerStyle(QwtKnob::Tick);
+    //setSizePolicy( QSizePolicy::MinimumExpanding,
+    //    QSizePolicy::MinimumExpanding );
 
     //connect( d_knob, SIGNAL( valueChanged( double ) ),
     //    this, SIGNAL( valueChanged( double ) ) );
@@ -84,19 +86,18 @@ Knob::Knob( const QString &title, double min, double max, QWidget *parent ):
 
 }*/
 
-
 QSize Knob::sizeHint() const
 {
     QSize sz1 = d_knob->sizeHint();
-    QSize sz2 = d_label->sizeHint();
+    //QSize sz2 = d_label->sizeHint();
 
-    const int w = qMax( sz1.width(), sz2.width() );
-    const int h = sz1.height() + sz2.height();
+    const int w = sz1.width();//qMax( sz1.width(), sz2.width() );
+    const int h = sz1.height(); //+ sz2.height();
 
     int off = qCeil( d_knob->scaleDraw()->extent( d_knob->font() ) );
     off -= 15; // spacing
 
-    return QSize( w, h - off );
+    return QSize( w, h );
 }
 
 void Knob::setValue( double value )
@@ -122,16 +123,16 @@ QColor Knob::theme() const
 void Knob::resizeEvent( QResizeEvent *event )
 {
     const QSize sz = event->size();
-    const QSize hint = d_label->sizeHint();
+    //const QSize hint = d_label->sizeHint();
 
-    d_label->setGeometry( 0, sz.height() - hint.height(),
-        sz.width(), hint.height() );
+    //d_label->setGeometry( 0, sz.height() - hint.height(),
+    //    sz.width(), hint.height() );
 
     const int knobHeight = d_knob->sizeHint().height();
 
     int off = qCeil( d_knob->scaleDraw()->extent( d_knob->font() ) );
     off -= 15; // spacing
 
-    d_knob->setGeometry( 0, d_label->pos().y() - knobHeight + off,
+    d_knob->setGeometry( 0, sz.height() - knobHeight + off,
         sz.width(), knobHeight );
 }

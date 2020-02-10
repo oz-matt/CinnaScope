@@ -36,6 +36,8 @@ QLed::QLed(QWidget* parent)
   colors << "red.svg" << "green.svg" << "yellow.svg" << "grey.svg" << "orange.svg" << "purple.svg" << "blue.svg";
 
   renderer = new QSvgRenderer();
+
+  setFixedSize(40, 30);
 }
 QLed::~QLed() {
   delete renderer;
@@ -119,3 +121,13 @@ void QLed::toggleValue() {
   update();
   return;
 }
+
+/*QSize QLed::sizeHint()
+{
+    return (QSize(20, 10));
+}
+
+QSize QLed::minimumSizeHint()
+{
+    return (QSize(20, 10));
+}*/

@@ -34,14 +34,18 @@ OscWidget::OscWidget( QWidget *parent ):
     timer->setInterval(10);
     connect(timer, &QTimer::timeout, d_plot, &Plot::updateMe);
 
-    d_timeperdivKnob = new Knob( "Time/div", 0, 10);
+    d_timeperdivKnob = new Knob( "Time/div", 0, 10, 50, true);
     d_timeperdivKnob->setValue( 5 );
  QGroupBox *groupBox = new QGroupBox(tr("Vertical"));
 QHBoxLayout *vert_layout = new QHBoxLayout(  );
-    d_vperdivKnob = new Knob( "V/div", 0, 10);
+    d_vperdivKnob = new Knob( "V/div", 0, 10, 50, true);
     d_vperdivKnob->setValue( 5 );
-    d_vperdivKnob2 = new Knob( "V/div", 0, 10);
+    d_vperdivKnob2 = new Knob( "V/div", 0, 10, 30, false);
     d_vperdivKnob2->setValue( 5 );
+
+    d_ch1offsetknob = new Knob( "V/div", 0, 10, 30, false);
+    d_ch1offsetknob->setValue( 5 );
+
 
     xline = new QwtPlotCurve();
 
@@ -56,22 +60,44 @@ QHBoxLayout *vert_layout = new QHBoxLayout(  );
 
         led->setOffColor(QLed::ledColor::Blue);
         led->setShape(QLed::ledShape::Rounded);
+        led->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     //d_intervalWheel = new WheelBox( "Displayed [s]", 0.1, 1.0, 0.01, this );
     //d_intervalWheel->setValue( 1.0 );
 
     //d_timerWheel = new WheelBox( "Sample Interval [ms]", 0.0, 20.0, 0.1, this );
     //d_timerWheel->setValue( 10.0 );
 
+        QLabel* vert_label1 = new QLabel("Scale");
+        QLabel* vert_label2 = new QLabel("Trig");
+        QLabel* vert_label3 = new QLabel("Offset");
+
+
+        QVBoxLayout* vLayout3 = new QVBoxLayout();
+        vLayout3->addWidget(vert_label1);
+        vLayout3->addWidget(vert_label2);
+        vLayout3->addWidget(vert_label3);
     QVBoxLayout* vLayout1 = new QVBoxLayout();
     //vLayout1->addWidget( d_intervalWheel );
     //vLayout1->addWidget( d_timerWheel );
     //vLayout1->addStretch( 10 );
     vLayout1->addWidget( d_timeperdivKnob );
-    vert_layout->addWidget( d_vperdivKnob );
-    vert_layout->addWidget( d_vperdivKnob2 );
-    vert_layout->addWidget( led );
+    //vLayout1->addWidget( led, 1 );
+
+    QVBoxLayout* vCh1Knobs = new QVBoxLayout();
+    vCh1Knobs->addWidget( d_vperdivKnob , 1);
+    vCh1Knobs->addWidget( led , 1);
+    vCh1Knobs->addWidget( d_ch1offsetknob , 1);
+
+
+    vert_layout->addLayout( vCh1Knobs , 1);
+    vert_layout->addLayout( vLayout3 , 1);
+    vert_layout->addWidget( d_vperdivKnob2 , 1);
     groupBox->setLayout(vert_layout);
     vLayout1->addWidget( groupBox );
+
+
+
+    led->resize(QSize(60,20));
 
     tpd_label = new QLabel(cstate.getTimePerDivString());
     vpd_label = new QLabel(cstate.getVPerDivString());
