@@ -37,15 +37,18 @@ OscWidget::OscWidget( QWidget *parent ):
     d_timeperdivKnob = new Knob( "Time/div", 0, 10, 50, true);
     d_timeperdivKnob->setValue( 5 );
  QGroupBox *groupBox = new QGroupBox(tr("Vertical"));
-QHBoxLayout *vert_layout = new QHBoxLayout(  );
+ QGroupBox *horiz_groupbox = new QGroupBox(tr("Horizontal"));
+QHBoxLayout *horiz_layout = new QHBoxLayout(  );
     d_vperdivKnob = new Knob( "V/div", 0, 10, 50, true);
     d_vperdivKnob->setValue( 5 );
-    d_vperdivKnob2 = new Knob( "V/div", 0, 10, 30, false);
+    d_vperdivKnob2 = new Knob( "V/div", 0, 10, 50, true);
     d_vperdivKnob2->setValue( 5 );
 
     d_ch1offsetknob = new Knob( "V/div", 0, 10, 30, false);
     d_ch1offsetknob->setValue( 5 );
 
+    d_ch2offsetknob = new Knob( "V/div", 0, 10, 30, false);
+    d_ch2offsetknob->setValue( 5 );
 
     xline = new QwtPlotCurve();
 
@@ -59,42 +62,90 @@ QHBoxLayout *vert_layout = new QHBoxLayout(  );
         led = new QLed(  );
 
         led->setOffColor(QLed::ledColor::Blue);
+        led->setOnColor(QLed::ledColor::Green);
         led->setShape(QLed::ledShape::Rounded);
         led->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+
+        led2 = new QLed(  );
+
+        led2->setOffColor(QLed::ledColor::Blue);
+        led2->setOnColor(QLed::ledColor::Green);
+        led2->setShape(QLed::ledShape::Rounded);
+        led2->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+        ledch1on = new QLed(  );
+
+        ledch1on->setOffColor(QLed::ledColor::Blue);
+        ledch1on->setOnColor(QLed::ledColor::Green);
+        ledch1on->setShape(QLed::ledShape::Rounded);
+        ledch1on->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+        ledch1on->setValue(true);
+
+        ledch2on = new QLed(  );
+
+        ledch2on->setOffColor(QLed::ledColor::Blue);
+        ledch2on->setOnColor(QLed::ledColor::Green);
+        ledch2on->setShape(QLed::ledShape::Rounded);
+        ledch2on->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 
         d_ch1offsetknob->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
         d_ch1offsetknob->resize(80,80);
 
+        QLabel* vert_labelch = new QLabel("On");
         QLabel* vert_label1 = new QLabel("Scale");
         QLabel* vert_label2 = new QLabel("Trig");
         QLabel* vert_label3 = new QLabel("Offset");
 
-
-        QVBoxLayout* vLayout3 = new QVBoxLayout();
-        vLayout3->addWidget(vert_label1);
-        vLayout3->addWidget(vert_label2);
-        vLayout3->addWidget(vert_label3);
     QVBoxLayout* vLayout1 = new QVBoxLayout();
     //vLayout1->addWidget( d_intervalWheel );
     //vLayout1->addWidget( d_timerWheel );
     //vLayout1->addStretch( 10 );
-    vLayout1->addWidget( d_timeperdivKnob );
+    horiz_layout->addWidget( d_timeperdivKnob );
+    horiz_groupbox->setLayout(horiz_layout);
+
+    //horiz_layout->setSizeConstraint(QLayout::SetFixedSize);
+    d_timeperdivKnob->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Minimum);
     //vLayout1->addWidget( led, 1 );
 
-    QVBoxLayout* vCh1Knobs = new QVBoxLayout();
-    vCh1Knobs->addWidget( d_vperdivKnob , 1);
-    vCh1Knobs->addWidget( led , 1);
-    vCh1Knobs->addWidget( d_ch1offsetknob , 1);
+    QVBoxLayout *vert_layout = new QVBoxLayout(  );
 
-    vCh1Knobs->setAlignment(led, Qt::AlignHCenter);
+    QHBoxLayout *ChOnRow = new QHBoxLayout(  );
+    QHBoxLayout *ScaleRow = new QHBoxLayout(  );
+    QHBoxLayout *TrigRow = new QHBoxLayout(  );
+    QHBoxLayout *OffsetRow = new QHBoxLayout(  );
 
-    vert_layout->addLayout( vCh1Knobs , 1);
-    vert_layout->addLayout( vLayout3 , 1);
-    vert_layout->addWidget( d_vperdivKnob2 , 1);
+    ChOnRow->addWidget( ledch1on);
+    ChOnRow->addWidget(vert_labelch, 0,Qt::AlignCenter);
+    ChOnRow->addWidget( ledch2on);
+
+    ChOnRow->setContentsMargins(QMargins(30,0,30,0));
+    ChOnRow->setSizeConstraint(QLayout::SetMinimumSize);
+
+    ScaleRow->addWidget( d_vperdivKnob);
+    ScaleRow->addWidget(vert_label1, 0,Qt::AlignCenter);
+    ScaleRow->addWidget( d_vperdivKnob2);
+
+    TrigRow->addWidget( led);
+    TrigRow->addWidget(vert_label2, 0,Qt::AlignCenter);
+    TrigRow->addWidget( led2);
+
+    TrigRow->setContentsMargins(QMargins(30,0,30,0));
+
+    OffsetRow->addWidget( d_ch1offsetknob);
+    OffsetRow->addWidget(vert_label3, 0,Qt::AlignCenter);
+    OffsetRow->addWidget( d_ch2offsetknob);
+
+    OffsetRow->setContentsMargins(QMargins(17,0,17,0));
+
+    vert_layout->addLayout( ChOnRow);
+    vert_layout->addLayout( ScaleRow);
+    vert_layout->addLayout( TrigRow);
+    vert_layout->addLayout( OffsetRow);
+
+    vert_layout->setSizeConstraint(QLayout::SetFixedSize);
     groupBox->setLayout(vert_layout);
+
+    vLayout1->addWidget( horiz_groupbox );
     vLayout1->addWidget( groupBox );
-
-
 
     led->resize(QSize(60,20));
 

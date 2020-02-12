@@ -90,13 +90,21 @@ d_knob->setMarkerStyle(QwtKnob::Tick);
 
 QSize Knob::sizeHint() const
 {
-    QSize sz1 = d_knob->sizeHint();
+    //QSize sz1 = d_knob->sizeHint();
     //QSize sz2 = d_label->sizeHint();
 
-    const int w = sz1.width();//qMax( sz1.width(), sz2.width() );
-    const int h = sz1.height(); //+ sz2.height();
+    //const int w = sz1.width();//qMax( sz1.width(), sz2.width() );
+    //const int h = sz1.height(); //+ sz2.height();
+    if (this->draw_ticks)
+    {
+        return QSize( 100, 70 );
+    }
+    else
+    {
+        return QSize( 60, 60 );
+    }
 
-    return QSize( w, h );
+
 }
 
 void Knob::setValue( double value )
@@ -130,10 +138,18 @@ void Knob::resizeEvent( QResizeEvent *event )
     const int knobHeight = d_knob->sizeHint().height();
 
     int off = qCeil( d_knob->scaleDraw()->extent( d_knob->font() ) );
-    off -= 15 + (50 - this->knob_width); // spacing
+    off -= 7 + (50 - this->knob_width); // spacing
 
-    if (!this->draw_ticks) off -= 10;
+    if (!this->draw_ticks)
+    {
+        off += 15;
+        d_knob->setGeometry( 0, sz.height() - knobHeight + off,
+            sz.width() , knobHeight );
+    }
+    else
+    {
+        d_knob->setGeometry( 0, sz.height() - knobHeight + off,
+            sz.width() , knobHeight  );
+    }
 
-    d_knob->setGeometry( 0, sz.height() - knobHeight + off,
-        sz.width(), knobHeight );
 }

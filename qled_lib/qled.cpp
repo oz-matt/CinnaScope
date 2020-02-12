@@ -131,3 +131,9 @@ QSize QLed::minimumSizeHint()
 {
     return (QSize(40, 30));
 }
+
+void QLed::mouseReleaseEvent(QMouseEvent *event)
+{
+    toggleValue();
+}
+

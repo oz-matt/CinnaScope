@@ -52,8 +52,13 @@ private:
     Knob *d_vperdivKnob;
     Knob *d_vperdivKnob2;
     Knob *d_ch1offsetknob;
+    Knob *d_ch2offsetknob;
     Knob *d_timeperdivKnob;
 QLed* led;
+QLed* led2;
+
+QLed* ledch1on;
+QLed* ledch2on;
 
     WheelBox *d_timerWheel;
     WheelBox *d_intervalWheel;
