@@ -187,6 +187,8 @@ QHBoxLayout *horiz_layout = new QHBoxLayout(  );
     connect( d_vperdivKnob, SIGNAL( ContinueMouseDragListen(QMouseEvent*) ),
             this, SLOT( ContinueMouseDragListen_vpd(QMouseEvent*) ) );
 
+    connect( ledch1on, SIGNAL( pushed(void ) ),
+            d_plot, SLOT(  toggleChannel(void) ) );
     /*connect( xline, SIGNAL( mousePressEvent(QMouseEvent*) ),
             this, SLOT( StartMouseDragListen_tl(QMouseEvent*) ) );
     connect( xline, SIGNAL( mouseMoveEvent(QMouseEvent*) ),

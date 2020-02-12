@@ -24,6 +24,7 @@ public:
 public Q_SLOTS:
     void setIntervalLength( double );
     void updateMe();
+    void toggleChannel();
 
 protected:
     virtual void showEvent( QShowEvent * );

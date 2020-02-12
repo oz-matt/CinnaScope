@@ -336,3 +336,22 @@ void Plot::mouseMoveEvent( QMouseEvent * event)
         }
     }
 }
+
+bool chon = true;
+
+void Plot::toggleChannel()
+{
+    if(chon)
+    {
+        d_curve->detach(  );
+        replot();
+        chon = false;
+    }
+    else
+    {
+        d_curve->attach( this );
+        replot();
+        chon = true;
+    }
+}
+

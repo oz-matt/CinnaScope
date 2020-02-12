@@ -64,6 +64,9 @@ class MY_PLUGIN_EXPORT QLed : public QWidget {
 
   void mouseReleaseEvent(QMouseEvent *event);
 
+signals:
+  void pushed();
+
  public slots:
   void setValue(bool);
   void setOnColor(ledColor);
