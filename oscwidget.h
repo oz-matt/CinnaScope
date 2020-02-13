@@ -28,6 +28,8 @@ public:
     void incrementVPerDiv();
     void decrementVPerDiv();
 
+    void setTrigLevel(double level);
+
     void mouseMoveEvent(QMouseEvent* event);
 
 Q_SIGNALS:
@@ -48,6 +50,8 @@ public Q_SLOTS:
     void ContinueMouseDragListen_tl(QMouseEvent *event);
     void StopMouseDragListen_tl(QMouseEvent *event);
 
+    void dragTrigLine(QMouseEvent *event, double frameHeight);
+
 private:
     Knob *d_vperdivKnob;
     Knob *d_vperdivKnob2;
@@ -62,6 +66,9 @@ QLed* ledch2on;
 
     WheelBox *d_timerWheel;
     WheelBox *d_intervalWheel;
+
+    double ch1TrigX[2] = {0, 0xFFFFFFFF};
+    double ch1TrigY[2] = {0, 0};
 
     Plot *d_plot;
     QTimer *timer;

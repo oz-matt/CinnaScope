@@ -20,6 +20,7 @@
 
 extern CinnaState cstate;
 
+
 OscWidget::OscWidget( QWidget *parent ):
     QWidget( parent )
 {
@@ -52,29 +53,27 @@ QHBoxLayout *horiz_layout = new QHBoxLayout(  );
 
     xline = new QwtPlotCurve();
 
-    double x[3] ={1.0, 0.0, 1.0};
-        double y[3] ={1.0,0,0};
 
-        xline->setData(new QwtCPointerData(x,y,3));
+       xline->setData(new QwtCPointerData(ch1TrigX,ch1TrigY,2));
         xline->setPen(QPen(QColor(Qt::white),1,Qt::SolidLine));
         xline->attach(d_plot);
-
+d_plot->replot();
         led = new QLed(  );
 
-        led->setOffColor(QLed::ledColor::Blue);
+        led->setOffColor(QLed::ledColor::Grey);
         led->setOnColor(QLed::ledColor::Green);
         led->setShape(QLed::ledShape::Rounded);
         led->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 
         led2 = new QLed(  );
 
-        led2->setOffColor(QLed::ledColor::Blue);
+        led2->setOffColor(QLed::ledColor::Grey);
         led2->setOnColor(QLed::ledColor::Green);
         led2->setShape(QLed::ledShape::Rounded);
         led2->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
         ledch1on = new QLed(  );
 
-        ledch1on->setOffColor(QLed::ledColor::Blue);
+        ledch1on->setOffColor(QLed::ledColor::Grey);
         ledch1on->setOnColor(QLed::ledColor::Green);
         ledch1on->setShape(QLed::ledShape::Rounded);
         ledch1on->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
@@ -82,7 +81,7 @@ QHBoxLayout *horiz_layout = new QHBoxLayout(  );
 
         ledch2on = new QLed(  );
 
-        ledch2on->setOffColor(QLed::ledColor::Blue);
+        ledch2on->setOffColor(QLed::ledColor::Grey);
         ledch2on->setOnColor(QLed::ledColor::Green);
         ledch2on->setShape(QLed::ledShape::Rounded);
         ledch2on->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
@@ -170,9 +169,6 @@ QHBoxLayout *horiz_layout = new QHBoxLayout(  );
     layout->addLayout(vLayout2, 1);
     layout->addLayout(vLayout1, 0);
 
-    //connect( d_amplitudeKnob, SIGNAL( valueChanged( double ) ),
-        //SIGNAL( amplitudeChanged( double ) ) );
-
     connect( d_timeperdivKnob, SIGNAL( wheelEvent(QWheelEvent*) ),
             this, SLOT( updateTimePerDivTextFromScroll(QWheelEvent*) ) );
     connect( d_timeperdivKnob, SIGNAL( StartMouseDragListen(QMouseEvent*) ),
@@ -189,20 +185,9 @@ QHBoxLayout *horiz_layout = new QHBoxLayout(  );
 
     connect( ledch1on, SIGNAL( pushed(void ) ),
             d_plot, SLOT(  toggleChannel(void) ) );
-    /*connect( xline, SIGNAL( mousePressEvent(QMouseEvent*) ),
-            this, SLOT( StartMouseDragListen_tl(QMouseEvent*) ) );
-    connect( xline, SIGNAL( mouseMoveEvent(QMouseEvent*) ),
-            this, SLOT( ContinueMouseDragListen_tl(QMouseEvent*) ) );
-    connect( xline, SIGNAL( mouseReleaseEvent(QMouseEvent*) ),
-            this, SLOT( StopMouseDragListen_tl(QMouseEvent*) ) );
-*/
-    //connect( d_frequencyKnob, SIGNAL( valueChanged( double ) ),
-        //SIGNAL( frequencyChanged( double ) ) );
-    //connect( d_timerWheel, SIGNAL( valueChanged( double ) ),
-        //SIGNAL( signalIntervalChanged( double ) ) );
 
-    //connect( d_intervalWheel, SIGNAL( valueChanged( double ) ),
-        //d_plot, SLOT( setIntervalLength( double ) ) );
+    connect( d_plot, SIGNAL( trigLineDrag(QMouseEvent*, double) ),
+            this, SLOT(  dragTrigLine(QMouseEvent*, double) ) );
 }
 
 void OscWidget::start()
@@ -273,6 +258,12 @@ void OscWidget::decrementVPerDiv()
     vpd_label->setText(cstate.getVPerDivString());
     xline->detach();
     d_plot->replot();
+}
+
+void OscWidget::setTrigLevel(double level)
+{
+    ch1TrigY[0] = level;
+    ch1TrigY[1] = level;
 }
 
 void OscWidget::updateTimePerDivTextFromScroll(QWheelEvent *event)
@@ -376,4 +367,16 @@ void OscWidget::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
+
+void OscWidget::dragTrigLine(QMouseEvent *event, double frameHeight)
+{
+    double normalizedYCursorPos = event->y() - (frameHeight / 2.0);
+    double newYTrigLinePosInVolts = ((normalizedYCursorPos / (frameHeight / 2.0)) * cstate.getVPerDivNum() * -4);
+
+    qDebug("y: %d, frameh: %f, normCursor: %f, newY: %f", event->y(), frameHeight,normalizedYCursorPos, newYTrigLinePosInVolts);
+
+    ch1TrigY[0] = newYTrigLinePosInVolts;
+    ch1TrigY[1] = newYTrigLinePosInVolts;
+    d_plot->replot();
+}
 
