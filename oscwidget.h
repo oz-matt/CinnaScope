@@ -75,6 +75,7 @@ QLed* ledch2on;
 
     QLabel* tpd_label;
     QLabel* vpd_label;
+    QLabel* trigsymw;
 
     QwtPlotCurve *xline;
 };

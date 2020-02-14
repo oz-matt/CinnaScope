@@ -165,8 +165,16 @@ d_plot->replot();
     vLayout2->addLayout(layout3);
     vLayout2->addLayout(label_layout);
 
+    QVBoxLayout* trigsymarea = new QVBoxLayout();
+    trigsymw = new QLabel("T1");
+    trigsymw->setFixedWidth(20);
+    trigsymw->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Maximum);
+
+    trigsymarea->addWidget(trigsymw);
+
     QHBoxLayout *layout = new QHBoxLayout( this );
     layout->addLayout(vLayout2, 1);
+    layout->addLayout(trigsymarea, 0);
     layout->addLayout(vLayout1, 0);
 
     connect( d_timeperdivKnob, SIGNAL( wheelEvent(QWheelEvent*) ),
@@ -377,6 +385,9 @@ void OscWidget::dragTrigLine(QMouseEvent *event, double frameHeight)
 
     ch1TrigY[0] = newYTrigLinePosInVolts;
     ch1TrigY[1] = newYTrigLinePosInVolts;
+
+    trigsymw->move(trigsymw->pos().x(), event->y());
+
     d_plot->replot();
 }
 
