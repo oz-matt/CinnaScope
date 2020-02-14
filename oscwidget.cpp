@@ -56,7 +56,6 @@ QHBoxLayout *horiz_layout = new QHBoxLayout(  );
 
        xline->setData(new QwtCPointerData(ch1TrigX,ch1TrigY,2));
         xline->setPen(QPen(QColor(Qt::white),1,Qt::SolidLine));
-        xline->attach(d_plot);
 d_plot->replot();
         led = new QLed(  );
 
@@ -166,7 +165,7 @@ d_plot->replot();
     vLayout2->addLayout(label_layout);
 
     QVBoxLayout* trigsymarea = new QVBoxLayout();
-    trigsymw = new QLabel("T1");
+    trigsymw = new QLabel("  ");
     trigsymw->setFixedWidth(20);
     trigsymw->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Maximum);
 
@@ -193,6 +192,8 @@ d_plot->replot();
 
     connect( ledch1on, SIGNAL( pushed(void ) ),
             d_plot, SLOT(  toggleChannel(void) ) );
+    connect( led, SIGNAL( pushed(void ) ),
+            this, SLOT(  toggleCh1Trig(void) ) );
 
     connect( d_plot, SIGNAL( trigLineDrag(QMouseEvent*, double) ),
             this, SLOT(  dragTrigLine(QMouseEvent*, double) ) );
@@ -389,5 +390,30 @@ void OscWidget::dragTrigLine(QMouseEvent *event, double frameHeight)
     trigsymw->move(trigsymw->pos().x(), event->y());
 
     d_plot->replot();
+}
+
+void OscWidget::toggleCh1Trig(void)
+{
+    if (ch1TrigState)
+    {
+        ch1TrigState = false;
+        xline->detach();
+        trigsymw->setText("  ");
+        ch1TrigLastY = 0;
+        d_plot->replot();
+    }
+    else
+    {
+        double frameHeight = d_plot->frameRect().height();
+
+        ch1TrigY[0] = 0;
+        ch1TrigY[1] = 0;
+        trigsymw->move(trigsymw->pos().x(), frameHeight / 2);
+
+        ch1TrigState = true;
+        xline->attach(d_plot);
+        trigsymw->setText("T1");
+        d_plot->replot();
+    }
 }
 

@@ -51,8 +51,13 @@ public Q_SLOTS:
     void StopMouseDragListen_tl(QMouseEvent *event);
 
     void dragTrigLine(QMouseEvent *event, double frameHeight);
+    void toggleCh1Trig(void);
 
 private:
+
+    bool ch1TrigState = false;
+    double ch1TrigLastY = 0;
+
     Knob *d_vperdivKnob;
     Knob *d_vperdivKnob2;
     Knob *d_ch1offsetknob;
