@@ -165,9 +165,16 @@ d_plot->replot();
     vLayout2->addLayout(label_layout);
 
     QVBoxLayout* trigsymarea = new QVBoxLayout();
-    trigsymw = new QLabel("  ");
+    trigsymw = new QLabel("T1");
     trigsymw->setFixedWidth(20);
-    trigsymw->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Maximum);
+    double frameHeight = d_plot->frameRect().height();
+    trigsymw->move(trigsymw->pos().x(), frameHeight/2);
+    QSizePolicy sp_retain = trigsymw->sizePolicy();
+    sp_retain.setRetainSizeWhenHidden(true);
+    trigsymw->setSizePolicy(sp_retain);
+    //trigsymw->setVisible(false);
+    trigsymw->hide();
+    //trigsymw->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Maximum);
 
     trigsymarea->addWidget(trigsymw);
 
@@ -387,7 +394,7 @@ void OscWidget::dragTrigLine(QMouseEvent *event, double frameHeight)
     ch1TrigY[0] = newYTrigLinePosInVolts;
     ch1TrigY[1] = newYTrigLinePosInVolts;
 
-    trigsymw->move(trigsymw->pos().x(), event->y());
+    trigsymw->move(trigsymw->pos().x(), normalizedYCursorPos);
 
     d_plot->replot();
 }
@@ -398,7 +405,9 @@ void OscWidget::toggleCh1Trig(void)
     {
         ch1TrigState = false;
         xline->detach();
-        trigsymw->setText("  ");
+        //trigsymw->setText("3");
+        //trigsymw->setVisible(false);
+        trigsymw->hide();
         ch1TrigLastY = 0;
         d_plot->replot();
     }
@@ -408,11 +417,13 @@ void OscWidget::toggleCh1Trig(void)
 
         ch1TrigY[0] = 0;
         ch1TrigY[1] = 0;
-        trigsymw->move(trigsymw->pos().x(), frameHeight / 2);
-
         ch1TrigState = true;
         xline->attach(d_plot);
-        trigsymw->setText("T1");
+        //trigsymw->setText("T1");
+        //trigsymw->setVisible(true);
+        trigsymw->show();
+        trigsymw->move(trigsymw->pos().x(), 0);//frameHeight/2);
+
         d_plot->replot();
     }
 }
