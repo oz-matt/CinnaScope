@@ -57,8 +57,21 @@ DWORD lastAddress = 0;
 void SamplingThread::sample( double elapsed )
 {
 
+    DWORD address = 0;
+
     if(cpi.Get_BRAM_Address_Pointer(&address))
     {
+        int newPts;
+
+        if(address >= lastAddress)
+        {
+            newPts = address - lastAddress;
+        }
+        else
+        {
+            newPts = (16384 - lastAddress) + address;
+        }
+
         qDebug("Address: %d, NewPts: %d", address, address - lastAddress);
         lastAddress = address;
     }
