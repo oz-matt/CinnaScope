@@ -47,7 +47,7 @@ double SamplingThread::amplitude() const
 #define INCOMING_SAMPLES_PER_SEC 100
 #define DATA_PTS_COLLECTED_PER_SAMPLE_FXN_CALL 2
 
-#define TIMESTEP 0.000000016
+#define TIMESTEP 0.000000064
 
 
 double curr_time = 0;
@@ -117,13 +117,21 @@ void SamplingThread::sample( double elapsed )
                     int j, k;
                     for(j=(wrap_spacing-1);j>=0;j--)
                     {
-                        const QPointF s( curr_time, cpi.pcie_read_data[16384 - j]);
+                        DWORD y = (cpi.pcie_read_data[address - j]) >> 48;
+                        int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
+                        double yvolts = ytc * (double)0.01220703125;
+
+                        const QPointF s( curr_time,yvolts);
                         SignalData::instance().append( s );
                         curr_time = curr_time + TIMESTEP;
                     }
                     for(k=address;k>=0;k--)
                     {
-                        const QPointF s( curr_time, cpi.pcie_read_data[address - k]);
+                        DWORD y = (cpi.pcie_read_data[address - k]) >> 48;
+                        int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
+                        double yvolts = ytc * (double)0.01220703125;
+
+                        const QPointF s( curr_time, yvolts);
                         SignalData::instance().append( s );
                         curr_time = curr_time + TIMESTEP;
                     }
@@ -137,7 +145,8 @@ void SamplingThread::sample( double elapsed )
                     for(j=(numNewPoints-1);j>=0;j--)
                     {
                         DWORD y = (cpi.pcie_read_data[address - j]) >> 48;
-                        double yvolts = (y - 8192) * (double)0.01220703125;
+                        int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
+                        double yvolts = ytc * (double)0.01220703125;
 
                         const QPointF s( curr_time, yvolts);
                         SignalData::instance().append( s );
