@@ -90,8 +90,7 @@ void SamplingThread::sample( double elapsed )
 
 
 
-            if(cpi.updateOscData())
-            {
+
                 bool wrap = false;
                 int wrap_spacing = 0;
 
@@ -101,7 +100,7 @@ void SamplingThread::sample( double elapsed )
                 if((signed int)(address - lastAddress) < 0)
                 {
                     wrap = true;
-                    wrap_spacing = 32768 - lastAddress;
+                    wrap_spacing = 32767 - lastAddress;
                     numNewPoints = wrap_spacing + address + 1;
                 }
                 else
@@ -114,58 +113,89 @@ void SamplingThread::sample( double elapsed )
 
                 if (wrap)
                 {
-                    int j, k;
-                    for(j=(wrap_spacing-1);j>=0;j--)
-                    {
-                        DWORD y = (cpi.pcie_read_data[address - j]) >> 48;
-                        int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
-                        double yvolts = ytc * (double)0.01220703125;
+                    qDebug("Num Points To Update: %d", numNewPoints);
 
-                        const QPointF s( curr_time,yvolts);
-                        SignalData::instance().append( s );
-                        curr_time = curr_time + TIMESTEP;
-                    }
-                    for(k=address;k>=0;k--)
+                    if (wrap_spacing > 0)
                     {
-                        DWORD y = (cpi.pcie_read_data[address - k]) >> 48;
-                        int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
-                        double yvolts = ytc * (double)0.01220703125;
+                        qint64 newpts1[wrap_spacing];
 
-                        const QPointF s( curr_time, yvolts);
-                        SignalData::instance().append( s );
-                        curr_time = curr_time + TIMESTEP;
+                        unsigned int start_address = 0x100000 + lastAddress + 1;
+
+                        if(PCIE_DmaRead(cpi.getHandle(), start_address, newpts1, wrap_spacing))
+                        {
+                            int j;
+                            for(j=0;j<wrap_spacing;j++)
+                            {
+                                DWORD y = (newpts1[j]) >> 48;
+                                int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
+                                double yvolts = ytc * (double)0.01220703125;
+
+                                const QPointF s( curr_time, yvolts);
+                                SignalData::instance().append( s );
+                                curr_time += TIMESTEP;
+                                qDebug("Address: %d, Data: %hd, Volts: %f", start_address+j, y, yvolts);
+                            }
+                        }
+                        else
+                        {
+                            qDebug("FAILtwra1p");
+                        }
                     }
+
+                    qint64 newpts2[address+1];
+
+                    unsigned int start_address = 0x100000;
+
+                    if(PCIE_DmaRead(cpi.getHandle(), start_address, newpts2, address+1))
+                    {
+                        int j;
+                        for(j=0;j<address+1;j++)
+                        {
+                            DWORD y = (newpts2[j]) >> 48;
+                            int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
+                            double yvolts = ytc * (double)0.01220703125;
+
+                            const QPointF s( curr_time, yvolts);
+                            SignalData::instance().append( s );
+                            curr_time += TIMESTEP;
+                            qDebug("Address: %d, Data: %hd, Volts: %f", j, y, yvolts);
+                        }
+                    }
+                    else
+                    {
+                        qDebug("FAILtwra2p");
+                    }
+
                 }
                 else
                 {
-                    qDebug("\r\nSample START:\r\n\r\n");
                     qDebug("Num Points To Update: %d", numNewPoints);
 
-                    int j;
-                    for(j=(numNewPoints-1);j>=0;j--)
-                    {
-                        DWORD y = (cpi.pcie_read_data[address - j]) >> 48;
-                        int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
-                        double yvolts = ytc * (double)0.01220703125;
+                    qint64 newpts[numNewPoints];
 
-                        const QPointF s( curr_time, yvolts);
-                        SignalData::instance().append( s );
-                        curr_time += TIMESTEP;
-                        qDebug("Address: %d, Data: %hd, Volts: %f", address, y, yvolts);
+                    unsigned int start_address = 0x100000 + lastAddress + 1;
+
+                    if(PCIE_DmaRead(cpi.getHandle(), start_address, newpts, numNewPoints))
+                    {
+                       int j;
+                       for(j=0;j<numNewPoints;j++)
+                       {
+                           DWORD y = (newpts[j]) >> 48;
+                           int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
+                           double yvolts = ytc * (double)0.01220703125;
+
+                           const QPointF s( curr_time, yvolts);
+                           SignalData::instance().append( s );
+                           curr_time += TIMESTEP;
+                           qDebug("Address: %d, Data: %hd, Volts: %f", start_address+j, y, yvolts);
+                       }
+                    }
+                    else
+                    {
+                        qDebug("FAILt");
                     }
 
-                    qDebug("\r\nEarlier:");
-                    qDebug("Address: %d, Data: %llX", address - j - 2, cpi.pcie_read_data[address - j - 2]);
-                    qDebug("Address: %d, Data: %llX", address - j - 3, cpi.pcie_read_data[address - j - 3]);
-                    qDebug("Address: %d, Data: %llX", address - j - 4, cpi.pcie_read_data[address - j - 4]);
                 }
-            }
-            else
-            {
-                qDebug("FAILED TO GET DATA!!!");
-            }
-
-
 
 
     }
