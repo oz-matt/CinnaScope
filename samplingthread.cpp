@@ -51,8 +51,21 @@ double SamplingThread::amplitude() const
 
 
 double curr_time = 0;
+bool firstSample = true;
 
 DWORD lastAddress = 0;
+
+static void ConvertAndAppendData(quint64 data, int address)
+{
+    WORD y = (data) >> 48;
+    qint16 ytc = (qint16)(y << 2) / 4 ; // convert 2s comp to signed int
+    double yvolts = ytc * (double)0.01220703125;
+
+    const QPointF s( curr_time, yvolts);
+    SignalData::instance().append( s );
+    curr_time += TIMESTEP;
+    qDebug("Address: %u, Data: %X, Volts: %f", address, data, yvolts);
+}
 
 void SamplingThread::sample( double elapsed )
 {
@@ -61,40 +74,11 @@ void SamplingThread::sample( double elapsed )
 
     if(cpi.Get_BRAM_Address_Pointer(&address))
     {
-        /*int newPts;
-
-        if(address >= lastAddress)
-        {
-            newPts = address - lastAddress;
-        }
-        else
-        {
-            newPts = (16384 - lastAddress) + address;
-        }
-
-        qDebug("Address: %d, NewPts: %d", address, address - lastAddress);
-        lastAddress = address;
-
-        int j;
-        for(j=(newPts-1);j>=0;j--)
-        {
-            DWORD y = (cpi.pcie_read_data[address - j]) >> 48;
-            double yvolts = (y - 8192) * (double)0.01220703125;
-
-            const QPointF s( curr_time, yvolts);
-            SignalData::instance().append( s );
-            curr_time += TIMESTEP;
-            qDebug("Address: %d, Data: %hd, Volts: %f", address, y, yvolts);
-        }
-        */
-
-
-
 
                 bool wrap = false;
                 int wrap_spacing = 0;
 
-                //qDebug("Address: %i, Data: %d", address, cpi.pcie_read_data[address]);
+                qDebug("Address: %i", address);
                 int numNewPoints = 0;
 
                 if((signed int)(address - lastAddress) < 0)
@@ -108,16 +92,18 @@ void SamplingThread::sample( double elapsed )
                     numNewPoints = address - lastAddress;
                 }
 
-                qDebug("Num Points To Update: %d, wrap: %b", numNewPoints, wrap);
+
                 lastAddress = address;
+                if(firstSample) firstSample = false;
+                else
+                {
+                //qDebug("Num Points To Update: %d, wrap: %d", numNewPoints, wrap);
 
                 if (wrap)
                 {
-                    qDebug("Num Points To Update: %d", numNewPoints);
-
                     if (wrap_spacing > 0)
                     {
-                        qint64 newpts1[wrap_spacing];
+                        quint64* newpts1 = new quint64[wrap_spacing];
 
                         unsigned int start_address = 0x100000 + lastAddress + 1;
 
@@ -126,52 +112,40 @@ void SamplingThread::sample( double elapsed )
                             int j;
                             for(j=0;j<wrap_spacing;j++)
                             {
-                                DWORD y = (newpts1[j]) >> 48;
-                                int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
-                                double yvolts = ytc * (double)0.01220703125;
-
-                                const QPointF s( curr_time, yvolts);
-                                SignalData::instance().append( s );
-                                curr_time += TIMESTEP;
-                                qDebug("Address: %d, Data: %hd, Volts: %f", start_address+j, y, yvolts);
+                                ConvertAndAppendData(newpts1[j], lastAddress+j+1);
                             }
                         }
                         else
                         {
                             qDebug("FAILtwra1p");
                         }
+                        delete newpts1;
                     }
 
-                    qint64 newpts2[address+1];
+                    quint64* newpts2 = new quint64[address+1];
 
                     unsigned int start_address = 0x100000;
 
-                    if(PCIE_DmaRead(cpi.getHandle(), start_address, newpts2, address+1))
+                    if(PCIE_DmaRead(cpi.getHandle(), 0, newpts2, address+1))
                     {
                         int j;
                         for(j=0;j<address+1;j++)
                         {
-                            DWORD y = (newpts2[j]) >> 48;
-                            int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
-                            double yvolts = ytc * (double)0.01220703125;
-
-                            const QPointF s( curr_time, yvolts);
-                            SignalData::instance().append( s );
-                            curr_time += TIMESTEP;
-                            qDebug("Address: %d, Data: %hd, Volts: %f", j, y, yvolts);
+                            ConvertAndAppendData(newpts2[j], j);
                         }
                     }
                     else
                     {
                         qDebug("FAILtwra2p");
                     }
+                    delete newpts2;
 
                 }
                 else
                 {
                     qDebug("Num Points To Update: %d", numNewPoints);
 
-                    qint64 newpts[numNewPoints];
+                    quint64* newpts = new quint64[numNewPoints];
 
                     unsigned int start_address = 0x100000 + lastAddress + 1;
 
@@ -180,21 +154,16 @@ void SamplingThread::sample( double elapsed )
                        int j;
                        for(j=0;j<numNewPoints;j++)
                        {
-                           DWORD y = (newpts[j]) >> 48;
-                           int16_t ytc = (int16_t)(y << 2) / 4 ; // convert 2s comp to signed int
-                           double yvolts = ytc * (double)0.01220703125;
-
-                           const QPointF s( curr_time, yvolts);
-                           SignalData::instance().append( s );
-                           curr_time += TIMESTEP;
-                           qDebug("Address: %d, Data: %hd, Volts: %f", start_address+j, y, yvolts);
+                           ConvertAndAppendData(newpts[j], lastAddress+1+j);
                        }
                     }
                     else
                     {
                         qDebug("FAILt");
                     }
+                    delete newpts;
 
+                }
                 }
 
 
