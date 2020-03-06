@@ -6,7 +6,7 @@
 #include <QVector>
 
 #define DEMO_PCIE_USER_BAR			PCIE_BAR0
-#define MEM_SIZE			(128*1024) //128KB
+#define MEM_SIZE			(128*2048) //128KB
 
 class CinnaPcieInterface
 {

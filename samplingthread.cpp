@@ -101,7 +101,7 @@ void SamplingThread::sample( double elapsed )
                 if((signed int)(address - lastAddress) < 0)
                 {
                     wrap = true;
-                    wrap_spacing = 16384 - lastAddress;
+                    wrap_spacing = 32768 - lastAddress;
                     numNewPoints = wrap_spacing + address + 1;
                 }
                 else

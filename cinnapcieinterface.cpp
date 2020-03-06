@@ -16,7 +16,7 @@ CinnaPcieInterface::CinnaPcieInterface()
         if (this->hPCIE)
         {
             qDebug("PCIE_Load Success!!!");
-            this->pcie_read_data = new quint64[16384];
+            this->pcie_read_data = new quint64[32768];
             this->pcieSuccess = true;
         }
         else
@@ -43,7 +43,7 @@ BOOL CinnaPcieInterface::updateOscData()
 {
     BOOL bPass = TRUE;
 
-    bPass = PCIE_DmaRead(this->hPCIE, 0x20000, this->pcie_read_data, MEM_SIZE);
+    bPass = PCIE_DmaRead(this->hPCIE, 0x100000, this->pcie_read_data, MEM_SIZE);
 
     return bPass;
 }
