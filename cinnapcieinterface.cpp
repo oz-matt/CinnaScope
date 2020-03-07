@@ -97,7 +97,7 @@ int CinnaPcieInterface::exec()
 
      DWORD address = 0;
      this->Get_BRAM_Address_Pointer(&address);
-     this->updateOscData();
+     //this->updateOscData();
      this->pcie_address = address;
 
      bool wrap = false;
@@ -127,41 +127,73 @@ int CinnaPcieInterface::exec()
          {
 
 
-             unsigned int start_address = this->pcie_lastaddress + 1;
+             unsigned int start_address = (this->pcie_lastaddress + 1) * 8;
+             unsigned int rlen = wrap_spacing * 8;
 
+             quint64* bpts = new quint64[wrap_spacing];
+
+             if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address, bpts, rlen))
+             {
              int j;
              for(j=0;j<wrap_spacing;j++)
              {
-                 ConvertAndAppendData(pcie_read_data[start_address + j]);
+                 ConvertAndAppendData(bpts[j]);
              }
+             delete bpts;
+         }
+              else
+              {
+                  qDebug("dmaread fail1");
+              }
 
          }
 
          unsigned int start_address2 = 0;
+         unsigned int rlen2 = address * 8;
 
-         int j;
-         for(j=0;j<address+1;j++)
+         quint64* bpts2 = new quint64[address];
+
+         if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address2, bpts2, rlen2))
          {
-             ConvertAndAppendData(pcie_read_data[start_address2 + j]);
+         int j;
+         for(j=0;j<address;j++)
+         {
+             ConvertAndAppendData(bpts2[j]);
          }
+         delete bpts2;
+     }
+          else
+          {
+              qDebug("dmaread fail2");
+          }
 
      }
      else
      {
 
-         unsigned int start_address = this->pcie_lastaddress + 1;
+         unsigned int start_address = (this->pcie_lastaddress + 1) * 8;
+         unsigned int rlen = numNewPoints * 8;
 
+         quint64* bpts = new quint64[numNewPoints];
+
+         if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address, bpts, rlen))
+{
          int j;
          for(j=0;j<numNewPoints;j++)
          {
-             ConvertAndAppendData(pcie_read_data[start_address + j]);
+             ConvertAndAppendData(bpts[j]);
          }
-
+         delete bpts;
+}
+     else
+     {
+         qDebug("dmaread fail3");
      }
      }
-     sleep(.00001);
+     //sleep(.00001);
+    }
+     this->pcie_lastaddress = address;
 
-     this->pcie_lastaddress;
  }
 }
 
