@@ -4,11 +4,13 @@
 #include "pcie_lib/PCIE.h"
 #include <QtGlobal>
 #include <QVector>
+#include <QThread>
+#include <QMutex>
 
 #define DEMO_PCIE_USER_BAR			PCIE_BAR0
 #define MEM_SIZE			(128*2048) //128KB
 
-class CinnaPcieInterface
+class CinnaPcieInterface : public QThread
 {
 public:
     CinnaPcieInterface();
@@ -18,12 +20,20 @@ public:
 
     PCIE_HANDLE getHandle();
     void* getLibHandle();
-
+    void run();
+    int exec();
     bool pcieSuccess;
+    DWORD pcie_address;
+    DWORD pcie_lastaddress;
     quint64* pcie_read_data;
 
-private:
 
+    void ConvertAndAppendData(quint64 data);
+
+    QVector<double> newpts;
+
+private:
+QMutex mutex;
     void* lib_handle;
     PCIE_HANDLE hPCIE;
 };
