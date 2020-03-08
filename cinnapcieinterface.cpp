@@ -26,8 +26,10 @@ this->pcieSuccess = false;
          this->pcie_read_data = new BYTE[262144];
          this->pcie_address = new DWORD;
          this->pcie_num_new_pts = new DWORD;
+         *pcie_address = 0;
+         *pcie_num_new_pts = 0;
+
          this->pcieSuccess = true;
-         this->pcie_address = 0;
          this->pcie_lastaddress = 0;
      }
      else
@@ -82,7 +84,7 @@ void CinnaPcieInterface::AppendData(DWORD radd, DWORD buff_offset, DWORD n, DWOR
 {
     PCIE_DmaRead(this->hPCIE, radd, (void*)(this->pcie_read_data + buff_offset), n);
     *pcie_address = end_address;
-    *pcie_num_new_pts += n;
+    *pcie_num_new_pts = *pcie_num_new_pts + n;
     if (*pcie_num_new_pts > 12000) *pcie_num_new_pts = 12000;
 }
 
@@ -102,7 +104,9 @@ int CinnaPcieInterface::exec()
 
      int numNewPoints = 0;
 
-     if((signed int)(address - this->pcie_lastaddress) < 0)
+     int diff = address - this->pcie_lastaddress;
+
+     if(diff < 0)
      {
          wrap = true;
          wrap_spacing = 32767 - this->pcie_lastaddress;
@@ -114,7 +118,7 @@ int CinnaPcieInterface::exec()
      }
 
      qint64 mtime = myTimer.nsecsElapsed();
-     qDebug("Address: %i, Newpts: %d, nanos: %d", address, numNewPoints, mtime-ltime);
+     //qDebug("Address: %i, Newpts: %d, nanos: %d, wrap: %d, diff: %d", address, numNewPoints, (int)(mtime-ltime), wrap, diff);
      ltime = mtime;
 
      if(numNewPoints > 0)
