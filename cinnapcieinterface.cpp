@@ -75,20 +75,27 @@ exec();
 myTimer.start();
 }
 
+quint64 npts[32738];
+int idx = 0;
+
 void CinnaPcieInterface::ConvertAndAppendData(quint64 data)
 {
-    WORD y = (data) >> 48;
-    qint16 ytc = (qint16)(y << 2) / 4 ; // convert 2s comp to signed int
-    double yvolts = ytc * (double)0.01220703125;
+    //WORD y = (data) >> 48;
+    //qint16 ytc = (qint16)(y << 2) / 4 ; // convert 2s comp to signed int
+    //double yvolts = ytc * (double)0.01220703125;
 
     mutex.lock();
-    newpts.append(yvolts);
+    npts[idx++] = data;
+    if(idx>32737) idx=0;
     mutex.unlock();
     //const QPointF s( curr_time, yvolts);
     //SignalData::instance().append( s );
     //curr_time += TIMESTEP;
     //qDebug("Address: %u, Data: %X, Volts: %f", address, data, yvolts);
 }
+
+qint64 ltime = 0;
+BYTE bpts[262144];
 
 int CinnaPcieInterface::exec()
 {
@@ -116,79 +123,77 @@ int CinnaPcieInterface::exec()
          numNewPoints = this->pcie_address - this->pcie_lastaddress;
      }
 
-     qDebug("Address: %i, Newpts: %d, nanos: %d", address, numNewPoints, myTimer.nsecsElapsed());
+     qint64 mtime = myTimer.nsecsElapsed();
+     qDebug("Address: %i, Newpts: %d, nanos: %d", address, numNewPoints, mtime-ltime);
+     ltime = mtime;
 
      if(numNewPoints > 0)
      {
 
      if (wrap)
      {
-         if (wrap_spacing > 0)
-         {
+//         if (wrap_spacing > 0)
+//         {
 
 
-             unsigned int start_address = (this->pcie_lastaddress + 1) * 8;
-             unsigned int rlen = wrap_spacing * 8;
+//             quint32 start_address = (this->pcie_lastaddress + 1) << 3;
+//             quint32 rlen = wrap_spacing << 3;
 
-             quint64* bpts = new quint64[wrap_spacing];
+//             //quint64* bpts = new quint64[wrap_spacing];
 
-             if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address, bpts, rlen))
-             {
-             int j;
-             for(j=0;j<wrap_spacing;j++)
-             {
-                 ConvertAndAppendData(bpts[j]);
-             }
-             delete bpts;
-         }
-              else
-              {
-                  qDebug("dmaread fail1");
-              }
+//             if(1)//if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address, bpts, rlen))
+//             {
+//             int j;
+//             for(j=0;j<wrap_spacing;j++)
+//             {
+//                 ConvertAndAppendData(j);
+//             }
+//             //delete bpts;
+//         }
+//              else
+//              {
+//                  qDebug("dmaread fail1");
+//              }
 
-         }
+//         }
 
-         unsigned int start_address2 = 0;
-         unsigned int rlen2 = address * 8;
+//         quint32 start_address2 = 0;
+//         quint32 rlen2 = address << 3;
 
-         quint64* bpts2 = new quint64[address];
+//         //quint64* bpts2 = new quint64[address];
 
-         if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address2, bpts2, rlen2))
-         {
-         int j;
-         for(j=0;j<address;j++)
-         {
-             ConvertAndAppendData(bpts2[j]);
-         }
-         delete bpts2;
-     }
-          else
-          {
-              qDebug("dmaread fail2");
-          }
+//         if(1)//if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address2, bpts2, rlen2))
+//         {
+//         int j;
+//         for(j=0;j<address;j++)
+//         {
+//             ConvertAndAppendData(j);
+//         }
+//         //delete bpts2;
+//     }
+//          else
+//          {
+//              qDebug("dmaread fail2");
+//          }
 
      }
      else
      {
 
-         unsigned int start_address = (this->pcie_lastaddress + 1) * 8;
-         unsigned int rlen = numNewPoints * 8;
+         DWORD start_address = (this->pcie_lastaddress + 1) << 3;
+         DWORD rlen = numNewPoints << 3;
 
-         quint64* bpts = new quint64[numNewPoints];
+         //quint64* bpts = new quint64[numNewPoints];
 
-         if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address, bpts, rlen))
-{
-         int j;
-         for(j=0;j<numNewPoints;j++)
-         {
-             ConvertAndAppendData(bpts[j]);
-         }
-         delete bpts;
-}
-     else
-     {
-         qDebug("dmaread fail3");
-     }
+         PCIE_DmaRead(this->hPCIE, 0x100000 + start_address, bpts, rlen);
+
+         //int j=0;
+         //for(j=0;j<numNewPoints;j++)
+         //{
+             //ConvertAndAppendData(j);
+         //}
+         //delete bpts;
+
      }
      //sleep(.00001);
     }

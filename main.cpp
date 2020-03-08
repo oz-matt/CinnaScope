@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
 
     w.show();
 
+    cpi.start();
+
     bool ok = app.exec();
 
     return ok;
