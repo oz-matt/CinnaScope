@@ -6,6 +6,7 @@
 #include <math.h>
 #include <QDebug>
 #include "cinnapcieinterface.h"
+#include <QQueue>
 
 extern CinnaPcieInterface cpi;
 
@@ -55,10 +56,33 @@ bool firstSample = true;
 
 DWORD lastAddress = 0;
 
+extern QQueue<WORD> dataq;
+
 void SamplingThread::sample( double elapsed )
 {
 
+    while(1)
+    {
+        cpi.lockDataMutex();
+        if(!dataq.isEmpty())
+        {
+            qint16 ytc = (qint16)(dataq.dequeue() << 2) / 4; // convert to 2s comp
+            cpi.unlockDataMutex();
 
+            double yvolts = ytc * (double)0.01220703125;
+
+            const QPointF s(curr_time, yvolts);
+            SignalData::instance().append(s);
+            curr_time += TIMESTEP;
+        }
+        else
+        {
+            cpi.unlockDataMutex();
+            break;
+        }
+
+    }
+    //if(dataq.isEmpty())qDebug("lempty");
 }
 
 int i = 0;

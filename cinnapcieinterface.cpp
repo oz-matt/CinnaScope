@@ -87,12 +87,14 @@ void CinnaPcieInterface::AppendData(DWORD radd, DWORD buff_offset, DWORD n, DWOR
     PCIE_DmaRead(this->hPCIE, radd, (void*)(this->pcie_read_data + buff_offset), n);
 
     int nwords = n >> 2;
+
     int j;
     for(j=0;j<nwords;j=j+2)
     {
-        WORD next = pcie_read_data[buff_offset + j] << 8 | pcie_read_data[buff_offset + j + 1];
+        WORD next = pcie_read_data[buff_offset + j + 1] << 8 | pcie_read_data[buff_offset + j];
         dataq.enqueue(next);
     }
+    //qDebug("radd: %i, nwords: %d, end_address: %d", radd, nwords, end_address);
 
     //*pcie_address = end_address;
     //*pcie_num_new_pts = *pcie_num_new_pts + n;
@@ -158,7 +160,7 @@ int CinnaPcieInterface::exec()
          }
 
          DWORD start_address2 = 0;
-         DWORD rlen2 = address << 3;
+         DWORD rlen2 = (address + 1) << 3;
          AppendData(0x100000 + start_address2, start_address2, rlen2, address);
 
      }
