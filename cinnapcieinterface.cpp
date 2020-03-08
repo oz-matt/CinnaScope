@@ -23,7 +23,9 @@ this->pcieSuccess = false;
      if (this->hPCIE)
      {
          qDebug("PCIE_Load Success!!!");
-         this->pcie_read_data = new quint64[32768];
+         this->pcie_read_data = new BYTE[262144];
+         this->pcie_address = new DWORD;
+         this->pcie_num_new_pts = new DWORD;
          this->pcieSuccess = true;
          this->pcie_address = 0;
          this->pcie_lastaddress = 0;
@@ -75,27 +77,16 @@ exec();
 myTimer.start();
 }
 
-quint64 npts[32738];
-int idx = 0;
 
-void CinnaPcieInterface::ConvertAndAppendData(quint64 data)
+void CinnaPcieInterface::AppendData(DWORD radd, DWORD buff_offset, DWORD n, DWORD end_address)
 {
-    //WORD y = (data) >> 48;
-    //qint16 ytc = (qint16)(y << 2) / 4 ; // convert 2s comp to signed int
-    //double yvolts = ytc * (double)0.01220703125;
-
-    mutex.lock();
-    npts[idx++] = data;
-    if(idx>32737) idx=0;
-    mutex.unlock();
-    //const QPointF s( curr_time, yvolts);
-    //SignalData::instance().append( s );
-    //curr_time += TIMESTEP;
-    //qDebug("Address: %u, Data: %X, Volts: %f", address, data, yvolts);
+    PCIE_DmaRead(this->hPCIE, radd, (void*)(this->pcie_read_data + buff_offset), n);
+    *pcie_address = end_address;
+    *pcie_num_new_pts += n;
+    if (*pcie_num_new_pts > 12000) *pcie_num_new_pts = 12000;
 }
 
 qint64 ltime = 0;
-BYTE bpts[262144];
 
 int CinnaPcieInterface::exec()
 {
@@ -105,22 +96,21 @@ int CinnaPcieInterface::exec()
      DWORD address = 0;
      this->Get_BRAM_Address_Pointer(&address);
      //this->updateOscData();
-     this->pcie_address = address;
 
      bool wrap = false;
      int wrap_spacing = 0;
 
      int numNewPoints = 0;
 
-     if((signed int)(this->pcie_address - this->pcie_lastaddress) < 0)
+     if((signed int)(address - this->pcie_lastaddress) < 0)
      {
          wrap = true;
          wrap_spacing = 32767 - this->pcie_lastaddress;
-         numNewPoints = wrap_spacing + this->pcie_address + 1;
+         numNewPoints = wrap_spacing + address + 1;
      }
      else
      {
-         numNewPoints = this->pcie_address - this->pcie_lastaddress;
+         numNewPoints = address - this->pcie_lastaddress;
      }
 
      qint64 mtime = myTimer.nsecsElapsed();
@@ -130,72 +120,33 @@ int CinnaPcieInterface::exec()
      if(numNewPoints > 0)
      {
 
+     mutex.lock();
      if (wrap)
      {
-//         if (wrap_spacing > 0)
-//         {
+         if (wrap_spacing > 0)
+         {
 
+             DWORD start_address = (this->pcie_lastaddress + 1) << 3;
+             DWORD rlen = wrap_spacing << 3;
 
-//             quint32 start_address = (this->pcie_lastaddress + 1) << 3;
-//             quint32 rlen = wrap_spacing << 3;
+             AppendData(0x100000 + start_address, start_address, rlen, address);
+         }
 
-//             //quint64* bpts = new quint64[wrap_spacing];
-
-//             if(1)//if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address, bpts, rlen))
-//             {
-//             int j;
-//             for(j=0;j<wrap_spacing;j++)
-//             {
-//                 ConvertAndAppendData(j);
-//             }
-//             //delete bpts;
-//         }
-//              else
-//              {
-//                  qDebug("dmaread fail1");
-//              }
-
-//         }
-
-//         quint32 start_address2 = 0;
-//         quint32 rlen2 = address << 3;
-
-//         //quint64* bpts2 = new quint64[address];
-
-//         if(1)//if(PCIE_DmaRead(this->hPCIE, 0x100000 + start_address2, bpts2, rlen2))
-//         {
-//         int j;
-//         for(j=0;j<address;j++)
-//         {
-//             ConvertAndAppendData(j);
-//         }
-//         //delete bpts2;
-//     }
-//          else
-//          {
-//              qDebug("dmaread fail2");
-//          }
+         DWORD start_address2 = 0;
+         DWORD rlen2 = address << 3;
+         AppendData(0x100000 + start_address2, start_address2, rlen2, address);
 
      }
      else
      {
-
          DWORD start_address = (this->pcie_lastaddress + 1) << 3;
          DWORD rlen = numNewPoints << 3;
 
-         //quint64* bpts = new quint64[numNewPoints];
-
-         PCIE_DmaRead(this->hPCIE, 0x100000 + start_address, bpts, rlen);
-
-         //int j=0;
-         //for(j=0;j<numNewPoints;j++)
-         //{
-             //ConvertAndAppendData(j);
-         //}
-         //delete bpts;
+         AppendData(0x100000 + start_address, start_address, rlen, address);
 
      }
-     //sleep(.00001);
+     mutex.unlock();
+
     }
      this->pcie_lastaddress = address;
 

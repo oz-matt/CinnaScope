@@ -23,17 +23,19 @@ public:
     void run();
     int exec();
     bool pcieSuccess;
-    DWORD pcie_address;
     DWORD pcie_lastaddress;
-    quint64* pcie_read_data;
 
+    //Mutex protected
 
-    void ConvertAndAppendData(quint64 data);
-
-    QVector<double> newpts;
+    BYTE* pcie_read_data;
+    DWORD* pcie_address;
+    DWORD* pcie_num_new_pts;
 
 private:
-QMutex mutex;
+
+    void AppendData(DWORD radd, DWORD buff_offset, DWORD n, DWORD end_address);
+
+    QMutex mutex;
     void* lib_handle;
     PCIE_HANDLE hPCIE;
 };
