@@ -55,8 +55,8 @@ public Q_SLOTS:
 
 private:
 
-    bool ch1TrigState = false;
-    double ch1TrigLastY = 0;
+    bool ch1TrigState;
+    double ch1TrigLastY;
 
     Knob *d_vperdivKnob;
     Knob *d_vperdivKnob2;
@@ -72,8 +72,8 @@ QLed* ledch2on;
     WheelBox *d_timerWheel;
     WheelBox *d_intervalWheel;
 
-    double ch1TrigX[2] = {0, 0xFFFFFFFF};
-    double ch1TrigY[2] = {0, 0};
+    double ch1TrigX[2];
+    double ch1TrigY[2];
 
     Plot *d_plot;
     QTimer *timer;

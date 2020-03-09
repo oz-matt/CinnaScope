@@ -44,8 +44,6 @@ SOURCES += \
     wheelbox.cpp \
     oscwidget.cpp \
     cinnapcieinterface.cpp \
-    cinnafixedknob.cpp \
-    cinnaroundscaledraw.cpp \
     triggerline.cpp\
 
 HEADERS += \
@@ -62,7 +60,6 @@ HEADERS += \
     wheelbox.h \
     oscwidget.h \
     cinnastyle.h \
-    cinna.h \
     cinnapcieinterface.h \
     cinna.h \
     triggerline.h

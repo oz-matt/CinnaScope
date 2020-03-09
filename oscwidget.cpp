@@ -30,7 +30,11 @@ OscWidget::OscWidget( QWidget *parent ):
     d_plot->setIntervalLength( 1.0 );
 
     this->setMouseTracking(true);
+    this->ch1TrigX = {0, 0xFFFFFFFF};
+    this->ch1TrigY = {0, 0};
 
+    this->ch1TrigState = false;
+    this->ch1TrigLastY = 0;
     timer = new QTimer(this);
     timer->setInterval(10);
     connect(timer, &QTimer::timeout, d_plot, &Plot::updateMe);
@@ -59,30 +63,30 @@ QHBoxLayout *horiz_layout = new QHBoxLayout(  );
 d_plot->replot();
         led = new QLed(  );
 
-        led->setOffColor(QLed::ledColor::Grey);
-        led->setOnColor(QLed::ledColor::Green);
-        led->setShape(QLed::ledShape::Rounded);
+        led->setOffColor((QLed::ledColor)3);
+        led->setOnColor((QLed::ledColor)1);
+        led->setShape((QLed::ledShape)3);
         led->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 
         led2 = new QLed(  );
 
-        led2->setOffColor(QLed::ledColor::Grey);
-        led2->setOnColor(QLed::ledColor::Green);
-        led2->setShape(QLed::ledShape::Rounded);
+        led2->setOffColor((QLed::ledColor)3);
+        led2->setOnColor((QLed::ledColor)1);
+        led2->setShape((QLed::ledShape)3);
         led2->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
         ledch1on = new QLed(  );
 
-        ledch1on->setOffColor(QLed::ledColor::Grey);
-        ledch1on->setOnColor(QLed::ledColor::Green);
-        ledch1on->setShape(QLed::ledShape::Rounded);
+        ledch1on->setOffColor((QLed::ledColor)3);
+        ledch1on->setOnColor((QLed::ledColor)1);
+        ledch1on->setShape((QLed::ledShape)3);
         ledch1on->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
         ledch1on->setValue(true);
 
         ledch2on = new QLed(  );
 
-        ledch2on->setOffColor(QLed::ledColor::Grey);
-        ledch2on->setOnColor(QLed::ledColor::Green);
-        ledch2on->setShape(QLed::ledShape::Rounded);
+        ledch2on->setOffColor((QLed::ledColor)3);
+        ledch2on->setOnColor((QLed::ledColor)1);
+        ledch2on->setShape((QLed::ledShape)3);
         ledch2on->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 
         d_ch1offsetknob->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
