@@ -3,11 +3,15 @@
 #include <QDebug>
 #include <qevent.h>
 
-CinnaFixedKnob::CinnaFixedKnob( QWidget* parent ):
+CinnaFixedKnob::CinnaFixedKnob( QWidget* parent, bool drawTicks ):
     QwtKnob( parent )
 {
 
-    this->setScaleDraw(new CinnaRoundScaleDraw());
+    if(drawTicks)
+        this->setScaleDraw(new CinnaRoundScaleDraw());
+    else
+        this->setScaleDraw(new CinnaRoundScaleDrawNoTicks());
+
 
     this->setTotalAngle( 360.0 );
 
@@ -25,4 +29,3 @@ double CinnaFixedKnob::scrolledTo( const QPoint &pos ) const
 {
 
 }
-

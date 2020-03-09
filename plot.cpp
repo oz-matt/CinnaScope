@@ -310,6 +310,8 @@ bool Plot::eventFilter( QObject *object, QEvent *event )
 
 bool unsetOnce = false;
 bool setOnce = true;
+bool triglineclicked = false;
+
 
 void Plot::mouseMoveEvent( QMouseEvent * event)
 {
@@ -319,25 +321,76 @@ void Plot::mouseMoveEvent( QMouseEvent * event)
     double lowerBound = centerHeight - 3;
     double upperBound = centerHeight + 3;
 
-    if((event->y() <= upperBound) && (event->y() >= lowerBound))
+    if(triglineclicked)
     {
-        if (setOnce)
-        {
-            qDebug("y: %d, ysize: %d", event->y(), this->frameRect().height());
-            //this->unsetCursor();
-            //this->setCursor(Qt::SplitVCursor);
-            qApp->setOverrideCursor(Qt::SplitVCursor);
-            unsetOnce = true;
-            setOnce = false;
-        }
+        trigLineDrag(event, this->frameRect().height());
     }
     else
     {
-        if (unsetOnce)
+        if((event->y() <= upperBound) && (event->y() >= lowerBound))
         {
-            qApp->restoreOverrideCursor();
-            unsetOnce = false;
-            setOnce = true;
+            if (setOnce)
+            {
+                qDebug("y: %d, ysize: %d", event->y(), this->frameRect().height());
+                qApp->setOverrideCursor(Qt::SplitVCursor);
+                unsetOnce = true;
+                setOnce = false;
+            }
+        }
+        else
+        {
+            if (unsetOnce)
+            {
+                qApp->restoreOverrideCursor();
+                unsetOnce = false;
+                setOnce = true;
+            }
         }
     }
+
 }
+
+void Plot::mousePressEvent( QMouseEvent * event)
+{
+    if (unsetOnce)
+    {
+        qDebug("clicked!");
+        triglineclicked = true;
+    }
+}
+
+void Plot::mouseReleaseEvent( QMouseEvent * event)
+{
+    double centerHeight = this->frameRect().height() / 2.0;
+
+    double lowerBound = centerHeight - 3;
+    double upperBound = centerHeight + 3;
+
+    triglineclicked = false;
+    if(!((event->y() <= upperBound) && (event->y() >= lowerBound)))
+    {
+        qApp->restoreOverrideCursor();
+        unsetOnce = false;
+        setOnce = true;
+    }
+}
+
+
+bool chon = true;
+
+void Plot::toggleChannel()
+{
+    if(chon)
+    {
+        d_curve->detach(  );
+        replot();
+        chon = false;
+    }
+    else
+    {
+        d_curve->attach( this );
+        replot();
+        chon = true;
+    }
+}
+

@@ -3,6 +3,7 @@
 CinnaState::CinnaState()
 {
     this->TimePerDiv = MS50_PER_DIV;
+    this->VPerDiv = MV500_PER_DIV;
 }
 
 time_per_div_e& CinnaState::getTimePerDiv()

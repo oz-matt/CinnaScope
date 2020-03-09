@@ -20,6 +20,7 @@
 
 extern CinnaState cstate;
 
+
 OscWidget::OscWidget( QWidget *parent ):
     QWidget( parent )
 {
@@ -34,44 +35,117 @@ OscWidget::OscWidget( QWidget *parent ):
     timer->setInterval(10);
     connect(timer, &QTimer::timeout, d_plot, &Plot::updateMe);
 
-    d_timeperdivKnob = new Knob( "Time/div", 0, 10);
+    d_timeperdivKnob = new Knob( "Time/div", 0, 10, 50, true);
     d_timeperdivKnob->setValue( 5 );
  QGroupBox *groupBox = new QGroupBox(tr("Vertical"));
-QHBoxLayout *vert_layout = new QHBoxLayout(  );
-    d_vperdivKnob = new Knob( "V/div", 0, 10);
+ QGroupBox *horiz_groupbox = new QGroupBox(tr("Horizontal"));
+QHBoxLayout *horiz_layout = new QHBoxLayout(  );
+    d_vperdivKnob = new Knob( "V/div", 0, 10, 50, true);
     d_vperdivKnob->setValue( 5 );
-    d_vperdivKnob2 = new Knob( "V/div", 0, 10);
+    d_vperdivKnob2 = new Knob( "V/div", 0, 10, 50, true);
     d_vperdivKnob2->setValue( 5 );
+
+    d_ch1offsetknob = new Knob( "V/div", 0, 10, 30, false);
+    d_ch1offsetknob->setValue( 5 );
+
+    d_ch2offsetknob = new Knob( "V/div", 0, 10, 30, false);
+    d_ch2offsetknob->setValue( 5 );
 
     xline = new QwtPlotCurve();
 
-    double x[3] ={1.0, 0.0, 1.0};
-        double y[3] ={1.0,0,0};
 
-        xline->setData(new QwtCPointerData(x,y,3));
+       xline->setData(new QwtCPointerData(ch1TrigX,ch1TrigY,2));
         xline->setPen(QPen(QColor(Qt::white),1,Qt::SolidLine));
-        xline->attach(d_plot);
-
+d_plot->replot();
         led = new QLed(  );
 
-        led->setOffColor(QLed::ledColor::Blue);
+        led->setOffColor(QLed::ledColor::Grey);
+        led->setOnColor(QLed::ledColor::Green);
         led->setShape(QLed::ledShape::Rounded);
-    //d_intervalWheel = new WheelBox( "Displayed [s]", 0.1, 1.0, 0.01, this );
-    //d_intervalWheel->setValue( 1.0 );
+        led->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 
-    //d_timerWheel = new WheelBox( "Sample Interval [ms]", 0.0, 20.0, 0.1, this );
-    //d_timerWheel->setValue( 10.0 );
+        led2 = new QLed(  );
+
+        led2->setOffColor(QLed::ledColor::Grey);
+        led2->setOnColor(QLed::ledColor::Green);
+        led2->setShape(QLed::ledShape::Rounded);
+        led2->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+        ledch1on = new QLed(  );
+
+        ledch1on->setOffColor(QLed::ledColor::Grey);
+        ledch1on->setOnColor(QLed::ledColor::Green);
+        ledch1on->setShape(QLed::ledShape::Rounded);
+        ledch1on->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+        ledch1on->setValue(true);
+
+        ledch2on = new QLed(  );
+
+        ledch2on->setOffColor(QLed::ledColor::Grey);
+        ledch2on->setOnColor(QLed::ledColor::Green);
+        ledch2on->setShape(QLed::ledShape::Rounded);
+        ledch2on->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+
+        d_ch1offsetknob->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+        d_ch1offsetknob->resize(80,80);
+
+        QLabel* vert_labelch = new QLabel("On");
+        QLabel* vert_label1 = new QLabel("Scale");
+        QLabel* vert_label2 = new QLabel("Trig");
+        QLabel* vert_label3 = new QLabel("Offset");
 
     QVBoxLayout* vLayout1 = new QVBoxLayout();
     //vLayout1->addWidget( d_intervalWheel );
     //vLayout1->addWidget( d_timerWheel );
     //vLayout1->addStretch( 10 );
-    vLayout1->addWidget( d_timeperdivKnob );
-    vert_layout->addWidget( d_vperdivKnob );
-    vert_layout->addWidget( d_vperdivKnob2 );
-    vert_layout->addWidget( led );
+    horiz_layout->addWidget( d_timeperdivKnob );
+    horiz_groupbox->setLayout(horiz_layout);
+
+    //horiz_layout->setSizeConstraint(QLayout::SetFixedSize);
+    d_timeperdivKnob->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Minimum);
+    //vLayout1->addWidget( led, 1 );
+
+    QVBoxLayout *vert_layout = new QVBoxLayout(  );
+
+    QHBoxLayout *ChOnRow = new QHBoxLayout(  );
+    QHBoxLayout *ScaleRow = new QHBoxLayout(  );
+    QHBoxLayout *TrigRow = new QHBoxLayout(  );
+    QHBoxLayout *OffsetRow = new QHBoxLayout(  );
+
+    ChOnRow->addWidget( ledch1on);
+    ChOnRow->addWidget(vert_labelch, 0,Qt::AlignCenter);
+    ChOnRow->addWidget( ledch2on);
+
+    ChOnRow->setContentsMargins(QMargins(30,0,30,0));
+    ChOnRow->setSizeConstraint(QLayout::SetMinimumSize);
+
+    ScaleRow->addWidget( d_vperdivKnob);
+    ScaleRow->addWidget(vert_label1, 0,Qt::AlignCenter);
+    ScaleRow->addWidget( d_vperdivKnob2);
+
+    TrigRow->addWidget( led);
+    TrigRow->addWidget(vert_label2, 0,Qt::AlignCenter);
+    TrigRow->addWidget( led2);
+
+    TrigRow->setContentsMargins(QMargins(30,0,30,0));
+
+    OffsetRow->addWidget( d_ch1offsetknob);
+    OffsetRow->addWidget(vert_label3, 0,Qt::AlignCenter);
+    OffsetRow->addWidget( d_ch2offsetknob);
+
+    OffsetRow->setContentsMargins(QMargins(17,0,17,0));
+
+    vert_layout->addLayout( ChOnRow);
+    vert_layout->addLayout( ScaleRow);
+    vert_layout->addLayout( TrigRow);
+    vert_layout->addLayout( OffsetRow);
+
+    vert_layout->setSizeConstraint(QLayout::SetFixedSize);
     groupBox->setLayout(vert_layout);
+
+    vLayout1->addWidget( horiz_groupbox );
     vLayout1->addWidget( groupBox );
+
+    led->resize(QSize(60,20));
 
     tpd_label = new QLabel(cstate.getTimePerDivString());
     vpd_label = new QLabel(cstate.getVPerDivString());
@@ -90,12 +164,24 @@ QHBoxLayout *vert_layout = new QHBoxLayout(  );
     vLayout2->addLayout(layout3);
     vLayout2->addLayout(label_layout);
 
+    QVBoxLayout* trigsymarea = new QVBoxLayout();
+    trigsymw = new QLabel("T1");
+    trigsymw->setFixedWidth(20);
+    double frameHeight = d_plot->frameRect().height();
+    trigsymw->move(trigsymw->pos().x(), frameHeight/2);
+    QSizePolicy sp_retain = trigsymw->sizePolicy();
+    sp_retain.setRetainSizeWhenHidden(true);
+    trigsymw->setSizePolicy(sp_retain);
+    //trigsymw->setVisible(false);
+    trigsymw->hide();
+    //trigsymw->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Maximum);
+
+    trigsymarea->addWidget(trigsymw);
+
     QHBoxLayout *layout = new QHBoxLayout( this );
     layout->addLayout(vLayout2, 1);
+    layout->addLayout(trigsymarea, 0);
     layout->addLayout(vLayout1, 0);
-
-    //connect( d_amplitudeKnob, SIGNAL( valueChanged( double ) ),
-        //SIGNAL( amplitudeChanged( double ) ) );
 
     connect( d_timeperdivKnob, SIGNAL( wheelEvent(QWheelEvent*) ),
             this, SLOT( updateTimePerDivTextFromScroll(QWheelEvent*) ) );
@@ -111,20 +197,14 @@ QHBoxLayout *vert_layout = new QHBoxLayout(  );
     connect( d_vperdivKnob, SIGNAL( ContinueMouseDragListen(QMouseEvent*) ),
             this, SLOT( ContinueMouseDragListen_vpd(QMouseEvent*) ) );
 
-    /*connect( xline, SIGNAL( mousePressEvent(QMouseEvent*) ),
-            this, SLOT( StartMouseDragListen_tl(QMouseEvent*) ) );
-    connect( xline, SIGNAL( mouseMoveEvent(QMouseEvent*) ),
-            this, SLOT( ContinueMouseDragListen_tl(QMouseEvent*) ) );
-    connect( xline, SIGNAL( mouseReleaseEvent(QMouseEvent*) ),
-            this, SLOT( StopMouseDragListen_tl(QMouseEvent*) ) );
-*/
-    //connect( d_frequencyKnob, SIGNAL( valueChanged( double ) ),
-        //SIGNAL( frequencyChanged( double ) ) );
-    //connect( d_timerWheel, SIGNAL( valueChanged( double ) ),
-        //SIGNAL( signalIntervalChanged( double ) ) );
 
-    //connect( d_intervalWheel, SIGNAL( valueChanged( double ) ),
-        //d_plot, SLOT( setIntervalLength( double ) ) );
+    connect( ledch1on, SIGNAL( pushed(void ) ),
+            d_plot, SLOT(  toggleChannel(void) ) );
+    connect( led, SIGNAL( pushed(void ) ),
+            this, SLOT(  toggleCh1Trig(void) ) );
+
+    connect( d_plot, SIGNAL( trigLineDrag(QMouseEvent*, double) ),
+            this, SLOT(  dragTrigLine(QMouseEvent*, double) ) );
 
 }
 
@@ -196,6 +276,12 @@ void OscWidget::decrementVPerDiv()
     vpd_label->setText(cstate.getVPerDivString());
     xline->detach();
     d_plot->replot();
+}
+
+void OscWidget::setTrigLevel(double level)
+{
+    ch1TrigY[0] = level;
+    ch1TrigY[1] = level;
 }
 
 void OscWidget::updateTimePerDivTextFromScroll(QWheelEvent *event)
@@ -299,4 +385,48 @@ void OscWidget::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
+
+void OscWidget::dragTrigLine(QMouseEvent *event, double frameHeight)
+{
+    double normalizedYCursorPos = event->y() - (frameHeight / 2.0);
+    double newYTrigLinePosInVolts = ((normalizedYCursorPos / (frameHeight / 2.0)) * cstate.getVPerDivNum() * -4);
+
+    qDebug("y: %d, frameh: %f, normCursor: %f, newY: %f", event->y(), frameHeight,normalizedYCursorPos, newYTrigLinePosInVolts);
+
+    ch1TrigY[0] = newYTrigLinePosInVolts;
+    ch1TrigY[1] = newYTrigLinePosInVolts;
+
+    trigsymw->move(trigsymw->pos().x(), normalizedYCursorPos);
+
+    d_plot->replot();
+}
+
+void OscWidget::toggleCh1Trig(void)
+{
+    if (ch1TrigState)
+    {
+        ch1TrigState = false;
+        xline->detach();
+        //trigsymw->setText("3");
+        //trigsymw->setVisible(false);
+        trigsymw->hide();
+        ch1TrigLastY = 0;
+        d_plot->replot();
+    }
+    else
+    {
+        double frameHeight = d_plot->frameRect().height();
+
+        ch1TrigY[0] = 0;
+        ch1TrigY[1] = 0;
+        ch1TrigState = true;
+        xline->attach(d_plot);
+        //trigsymw->setText("T1");
+        //trigsymw->setVisible(true);
+        trigsymw->show();
+        trigsymw->move(trigsymw->pos().x(), 0);//frameHeight/2);
+
+        d_plot->replot();
+    }
+}
 

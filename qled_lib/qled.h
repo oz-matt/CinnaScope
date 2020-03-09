@@ -62,6 +62,11 @@ class MY_PLUGIN_EXPORT QLed : public QWidget {
     return m_shape;
   }
 
+  void mouseReleaseEvent(QMouseEvent *event);
+
+signals:
+  void pushed();
+
  public slots:
   void setValue(bool);
   void setOnColor(ledColor);
@@ -77,6 +82,9 @@ class MY_PLUGIN_EXPORT QLed : public QWidget {
   QStringList shapes;
   QStringList colors;
   void paintEvent(QPaintEvent* event);
+  QSize sizeHint();
+  QSize minimumSizeHint();
+
  private:
   QSvgRenderer* renderer ;
 };

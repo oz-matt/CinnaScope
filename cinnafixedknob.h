@@ -11,8 +11,9 @@ class CinnaFixedKnob : public QwtKnob
     Q_OBJECT
 
 public:
-    CinnaFixedKnob( QWidget* parent = NULL );
+    CinnaFixedKnob(QWidget* parent = NULL , bool drawTicks = true);
     virtual ~CinnaFixedKnob();
+
 
 Q_SIGNALS:
     void mouseMoveEvent( QMouseEvent * event);

@@ -14,7 +14,7 @@ class Knob: public QWidget
 
 public:
     Knob( const QString &title,
-        double min, double max, QWidget *parent = NULL );
+        double min, double max, int knobWidth, bool drawTicks, QWidget *parent = NULL );
 
 
     virtual QSize sizeHint() const;
@@ -36,7 +36,11 @@ protected:
 
 private:
     CinnaFixedKnob *d_knob;
-    QLabel *d_label;
+
+    int knob_width;
+    bool draw_ticks;
+
+    //QLabel *d_label;
 };
 
 #endif

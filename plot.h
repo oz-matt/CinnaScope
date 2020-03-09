@@ -20,10 +20,16 @@ public:
     virtual bool eventFilter( QObject *, QEvent * );
 
     void mouseMoveEvent( QMouseEvent * event);
+    void mousePressEvent( QMouseEvent * event);
+    void mouseReleaseEvent( QMouseEvent * event);
+
+signals:
+    void trigLineDrag(QMouseEvent *event, double frameHeight);
 
 public Q_SLOTS:
     void setIntervalLength( double );
     void updateMe();
+    void toggleChannel();
 
 protected:
     virtual void showEvent( QShowEvent * );
