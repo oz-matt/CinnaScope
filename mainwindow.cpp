@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     samplingThread->setAmplitude( ow->amplitude() );
 
     // sample() is now called every 10ms.
-    samplingThread->setInterval(3);
+    samplingThread->setInterval(10);
 
     ow->connect( ow, SIGNAL( frequencyChanged( double ) ),
         samplingThread, SLOT( setFrequency( double ) ) );
