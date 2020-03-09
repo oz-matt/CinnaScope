@@ -25,6 +25,9 @@ public:
     bool pcieSuccess;
     DWORD pcie_lastaddress;
 
+    void lockDataMutex();
+    void unlockDataMutex();
+
     //Mutex protected
 
     BYTE* pcie_read_data;

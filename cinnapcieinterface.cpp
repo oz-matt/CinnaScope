@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "QDebug"
 #include <QElapsedTimer>
+#include <QQueue>
 
 QElapsedTimer myTimer;
 
@@ -79,13 +80,33 @@ exec();
 myTimer.start();
 }
 
+QQueue<WORD> dataq;
 
 void CinnaPcieInterface::AppendData(DWORD radd, DWORD buff_offset, DWORD n, DWORD end_address)
 {
     PCIE_DmaRead(this->hPCIE, radd, (void*)(this->pcie_read_data + buff_offset), n);
-    *pcie_address = end_address;
-    *pcie_num_new_pts = *pcie_num_new_pts + n;
-    if (*pcie_num_new_pts > 12000) *pcie_num_new_pts = 12000;
+
+    int nwords = n >> 2;
+    int j;
+    for(j=0;j<nwords;j=j+2)
+    {
+        WORD next = pcie_read_data[buff_offset + j] << 8 | pcie_read_data[buff_offset + j + 1];
+        dataq.enqueue(next);
+    }
+
+    //*pcie_address = end_address;
+    //*pcie_num_new_pts = *pcie_num_new_pts + n;
+    //if (*pcie_num_new_pts > 12000) *pcie_num_new_pts = 12000;
+}
+
+void CinnaPcieInterface::lockDataMutex()
+{
+    mutex.lock();
+}
+
+void CinnaPcieInterface::unlockDataMutex()
+{
+    mutex.unlock();
 }
 
 qint64 ltime = 0;
@@ -118,13 +139,13 @@ int CinnaPcieInterface::exec()
      }
 
      qint64 mtime = myTimer.nsecsElapsed();
-     //qDebug("Address: %i, Newpts: %d, nanos: %d, wrap: %d, diff: %d", address, numNewPoints, (int)(mtime-ltime), wrap, diff);
+     qDebug("Address: %i, Newpts: %d, nanos: %d, wrap: %d, diff: %d", address, numNewPoints, (int)(mtime-ltime), wrap, diff);
      ltime = mtime;
 
      if(numNewPoints > 0)
      {
 
-     mutex.lock();
+     lockDataMutex();
      if (wrap)
      {
          if (wrap_spacing > 0)
@@ -149,7 +170,7 @@ int CinnaPcieInterface::exec()
          AppendData(0x100000 + start_address, start_address, rlen, address);
 
      }
-     mutex.unlock();
+     unlockDataMutex();
 
     }
      this->pcie_lastaddress = address;

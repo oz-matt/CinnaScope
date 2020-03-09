@@ -55,10 +55,9 @@ bool firstSample = true;
 
 DWORD lastAddress = 0;
 
-
-
 void SamplingThread::sample( double elapsed )
 {
+
 
 }
 
