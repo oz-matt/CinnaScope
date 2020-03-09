@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ow->start();
 
-    samplingThread->start();
+    //samplingThread->start();
 
     setCentralWidget(ow);
 }

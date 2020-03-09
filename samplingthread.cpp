@@ -54,9 +54,11 @@ double SamplingThread::amplitude() const
 double curr_time = 0;
 bool firstSample = true;
 
-DWORD lastAddress = 0;
+//extern QQueue<WORD> dataq;
 
-extern QQueue<WORD> dataq;
+extern WORD dataq[100];
+extern WORD dataq_address;
+extern WORD dataq_num_new_pts;
 
 void SamplingThread::sample( double elapsed )
 {
@@ -65,16 +67,16 @@ void SamplingThread::sample( double elapsed )
     {
 
         cpi.lockDataMutex();
-        if(!dataq.isEmpty())
+        if(dataq_num_new_pts > 0)
         {
-            qint16 ytc = (qint16)(dataq.dequeue() << 2) / 4; // convert to 2s comp
+            /*qint16 ytc = (qint16)(dataq.dequeue() << 2) / 4; // convert to 2s comp
             cpi.unlockDataMutex();
 
             double yvolts = ytc * (double)0.01220703125;
 
             const QPointF s(curr_time, yvolts);
             SignalData::instance().append(s);
-            curr_time += TIMESTEP;
+            curr_time += TIMESTEP;*/
         }
         else
         {
