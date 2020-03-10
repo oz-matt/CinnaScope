@@ -27,7 +27,7 @@ OscWidget::OscWidget( QWidget *parent ):
     //const double intervalLength = 10.0; // seconds
 
     d_plot = new Plot( this );
-    d_plot->setIntervalLength( 1.0 );
+    d_plot->setIntervalLength( 0.001 );
 
     this->setMouseTracking(true);
     this->ch1TrigX = {0, 0xFFFFFFFF};
