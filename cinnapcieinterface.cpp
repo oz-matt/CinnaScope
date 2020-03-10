@@ -10,6 +10,8 @@
 
 QElapsedTimer myTimer;
 
+QVector<WORD> dataq;
+
 
 
 int nMilliseconds = myTimer.elapsed();
@@ -31,7 +33,7 @@ this->pcieSuccess = false;
          this->pcie_num_new_pts = new DWORD;
          *pcie_address = 0;
          *pcie_num_new_pts = 0;
-
+dataq.resize(1000);
          this->pcieSuccess = true;
          this->pcie_lastaddress = 0;
      }
@@ -82,13 +84,11 @@ exec();
 myTimer.start();
 }
 
-//QQueue<WORD> dataq;
-
 #define DATASIZE 100
 
-WORD dataq[DATASIZE];
-WORD dataq_address = 0;
-WORD dataq_num_new_pts = 0;
+//WORD dataq[DATASIZE];
+//WORD dataq_address = 0;
+//WORD dataq_num_new_pts = 0;
 
 double curr_time1 = 0;
 #define TIMESTEP1 = .00001
@@ -103,12 +103,13 @@ void CinnaPcieInterface::AppendData(DWORD radd, DWORD buff_offset, DWORD n, DWOR
     for(j=0;j<nwords;j=j+2)
     {
         WORD next = pcie_read_data[buff_offset + j + 1] << 8 | pcie_read_data[buff_offset + j];
-        qint16 ytc = (qint16)(next << 2) / 4; // convert to 2s comp
-        double yvolts = ytc * (double)0.01220703125;
+        dataq.append(next);
+        //qint16 ytc = (qint16)(next << 2) / 4; // convert to 2s comp
+        //double yvolts = ytc * (double)0.01220703125;
 
-        const QPointF s(curr_time1, yvolts);
-        SignalData::instance().append(s);
-        curr_time1 = curr_time1 + .00001;
+        //const QPointF s(curr_time1, yvolts);
+        //SignalData::instance().append(s);
+        //curr_time1 = curr_time1 + .00001;
         /*dataq[dataq_address++] = next;
         if (dataq_address > (DATASIZE - 1)) dataq_address = 0;
         dataq_num_new_pts += (j >> 1);

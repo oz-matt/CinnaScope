@@ -63,28 +63,28 @@ extern WORD dataq_num_new_pts;
 void SamplingThread::sample( double elapsed )
 {
 
-    while(1)
-    {
+//    while(1)
+//    {
 
-        cpi.lockDataMutex();
-        if(dataq_num_new_pts > 0)
-        {
-            /*qint16 ytc = (qint16)(dataq.dequeue() << 2) / 4; // convert to 2s comp
-            cpi.unlockDataMutex();
+//        cpi.lockDataMutex();
+//        if(dataq_num_new_pts > 0)
+//        {
+//            /*qint16 ytc = (qint16)(dataq.dequeue() << 2) / 4; // convert to 2s comp
+//            cpi.unlockDataMutex();
 
-            double yvolts = ytc * (double)0.01220703125;
+//            double yvolts = ytc * (double)0.01220703125;
 
-            const QPointF s(curr_time, yvolts);
-            SignalData::instance().append(s);
-            curr_time += TIMESTEP;*/
-        }
-        else
-        {
-            cpi.unlockDataMutex();
-            break;
-        }
+//            const QPointF s(curr_time, yvolts);
+//            SignalData::instance().append(s);
+//            curr_time += TIMESTEP;*/
+//        }
+//        else
+//        {
+//            cpi.unlockDataMutex();
+//            break;
+//        }
 
-    }
+//    }
     //if(dataq.isEmpty())qDebug("lempty");
 }
 

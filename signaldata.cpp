@@ -2,6 +2,10 @@
 #include <qvector.h>
 #include <qmutex.h>
 #include <qreadwritelock.h>
+#include "cinnapcieinterface.h"
+#include <QQueue>
+
+extern CinnaPcieInterface cpi;
 
 class SignalData::PrivateData
 {
@@ -54,19 +58,36 @@ SignalData::~SignalData()
     delete d_data;
 }
 
+extern QVector<WORD> dataq;
+
 int SignalData::size() const
 {
-    return d_data->values.size();
+    cpi.lockDataMutex();
+    int s = dataq.size();
+    cpi.unlockDataMutex();
+
+    return s;
 }
+
+double curr_time2 = 0.0;
 
 QPointF SignalData::value( int index ) const
 {
-    return d_data->values[index];
+    cpi.lockDataMutex();
+    WORD next = dataq[index];
+    cpi.unlockDataMutex();
+    qint16 ytc = (qint16)(next << 2) / 4; // convert to 2s comp
+    double yvolts = ytc * (double)0.01220703125;
+
+    const QPointF s(curr_time2, yvolts);
+    curr_time2 = curr_time2 + .00001;
+
+    return s;
 }
 
 QRectF SignalData::boundingRect() const
 {
-    return d_data->boundingRect;
+    //return
 }
 
 void SignalData::lock()
